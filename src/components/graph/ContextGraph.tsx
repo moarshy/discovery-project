@@ -48,7 +48,7 @@ export function ContextGraph({ hasEntities, graphSyncStatus, isSeeded }: Context
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--color-accent)] text-white text-xs font-medium hover:brightness-110 transition-all"
               >
                 <RefreshCw className="w-3 h-3" />
-                Sync
+                Run Analysis
               </motion.button>
             )}
 

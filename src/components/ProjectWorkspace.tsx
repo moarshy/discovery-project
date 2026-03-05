@@ -48,10 +48,18 @@ export function ProjectWorkspace() {
     };
 
     const timer = setTimeout(() => {
-      if (graphSyncStatus === 'extracting') {
-        dispatch({ type: 'SET_GRAPH_VIEW', payload: 'graph' });
+      const nextStatus = next[graphSyncStatus];
+      dispatch({ type: 'SET_GRAPH_SYNC_STATUS', payload: nextStatus });
+
+      // Auto-generate all outputs when sync completes
+      if (nextStatus === 'synced' && projectData) {
+        const idleIds = projectData.reports
+          .filter((r) => (outputGenStatuses[r.id] ?? 'idle') === 'idle')
+          .map((r) => r.id);
+        if (idleIds.length > 0) {
+          dispatch({ type: 'GENERATE_ALL_OUTPUTS', payload: idleIds });
+        }
       }
-      dispatch({ type: 'SET_GRAPH_SYNC_STATUS', payload: next[graphSyncStatus] });
     }, 2000);
 
     return () => clearTimeout(timer);

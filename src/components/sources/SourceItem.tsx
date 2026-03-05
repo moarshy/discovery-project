@@ -5,6 +5,8 @@ import {
   FileText,
   TicketCheck,
   Mic,
+  BarChart3,
+  MessageSquare,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import type { Source } from '../../types';
@@ -16,6 +18,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   FileText,
   TicketCheck,
   Mic,
+  BarChart3,
+  MessageSquare,
 };
 
 interface SourceItemProps {
@@ -31,29 +35,25 @@ export function SourceItem({ source, isSelected, isHighlighted, onClick, weight,
   const Icon = iconMap[source.icon] || FileText;
 
   return (
-    <div>
-      <motion.button
-        onClick={onClick}
-        className={cn(
-          'flex items-center gap-2 px-3 py-1.5 rounded-lg text-left w-full transition-all text-xs',
-          isSelected
-            ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] border border-[var(--color-accent)]/30'
-            : isHighlighted
-              ? 'bg-[var(--color-accent)]/10 text-[var(--color-text-primary)] border border-[var(--color-accent)]/20'
-              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)] hover:text-[var(--color-text-primary)] border border-transparent'
-        )}
-        whileTap={{ scale: 0.98 }}
-      >
-        <Icon className="w-3.5 h-3.5 shrink-0" />
-        <span className="truncate flex-1">{source.name}</span>
-        <IntegrationBadge integrationId={source.integrationId} />
-      </motion.button>
+    <motion.button
+      onClick={onClick}
+      className={cn(
+        'group flex items-center gap-2 px-3 py-1.5 rounded-lg text-left w-full transition-all text-xs',
+        isSelected
+          ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] border border-[var(--color-accent)]/30'
+          : isHighlighted
+            ? 'bg-[var(--color-accent)]/10 text-[var(--color-text-primary)] border border-[var(--color-accent)]/20'
+            : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)] hover:text-[var(--color-text-primary)] border border-transparent'
+      )}
+      whileTap={{ scale: 0.98 }}
+    >
+      <Icon className="w-3.5 h-3.5 shrink-0" />
+      <span className="truncate flex-1">{source.name}</span>
       <div
-        className="flex items-center gap-2 px-3 pb-1"
+        className="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <div className="w-3.5 shrink-0" />
         <input
           type="range"
           min={0}
@@ -61,12 +61,13 @@ export function SourceItem({ source, isSelected, isHighlighted, onClick, weight,
           step={0.1}
           value={weight}
           onChange={(e) => onWeightChange(parseFloat(e.target.value))}
-          className="flex-1 h-1 accent-[var(--color-accent)]"
+          className="w-12 h-0.5 accent-[var(--color-accent)] cursor-pointer"
         />
-        <span className="text-[10px] text-[var(--color-text-tertiary)] tabular-nums w-6 text-right">
+        <span className="text-[9px] text-[var(--color-text-tertiary)] tabular-nums w-5 text-right">
           {weight.toFixed(1)}×
         </span>
       </div>
-    </div>
+      <IntegrationBadge integrationId={source.integrationId} />
+    </motion.button>
   );
 }

@@ -122,6 +122,20 @@ export const outputTemplates: OutputTemplate[] = [
     description: 'Conflicting signals, trade-offs, and unresolved tensions in customer perception.',
     category: 'Brand',
   },
+  {
+    id: 'tpl-cs-friction',
+    type: 'cs-friction',
+    title: 'CS Friction Report',
+    description: 'Weekly Discord friction synthesis ranked by frequency and impact.',
+    category: 'Brand',
+  },
+  {
+    id: 'tpl-rebrand-readiness',
+    type: 'rebrand-readiness',
+    title: 'Rebrand Readiness Brief',
+    description: 'Customer perception today vs CEO target positioning, gap analysis with evidence.',
+    category: 'Brand',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -133,7 +147,7 @@ export const suggestedTemplates: Record<string, string[]> = {
   'okr-progress':            ['tpl-okr-progress', 'tpl-experiment-insights', 'tpl-4ps-progress'],
   'feature-prioritization':  ['tpl-synthesis', 'tpl-prd', 'tpl-business-case'],
   'feature-activation':      ['tpl-activation-report', 'tpl-funnel-diagnostic', 'tpl-activation-playbook'],
-  'brand-strategy':          ['tpl-vocabulary-map', 'tpl-brand-strategy', 'tpl-tensions'],
+  'brand-strategy':          ['tpl-vocabulary-map', 'tpl-brand-strategy', 'tpl-tensions', 'tpl-cs-friction', 'tpl-rebrand-readiness'],
 };
 
 // ---------------------------------------------------------------------------

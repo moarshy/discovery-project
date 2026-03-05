@@ -3,6 +3,7 @@ import type { AppState, AppAction } from './types';
 import { defaultProjects } from './data/projects';
 import { integrations as defaultIntegrations } from './data/integrations';
 import { defaultSkills, defaultSourceSkillAssignments, mockImportSkill } from './data/skills';
+import { defaultWeights } from './data/default-source-weights';
 
 export const initialState: AppState = {
   screen: 'projects',
@@ -48,9 +49,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedSourceId: null,
         selectedEntityId: null,
         activeOutputId: null,
+        graphView: 'table',
         graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
         sourceSkillAssignments: {},
-        sourceWeights: {},
+        sourceWeights: defaultWeights[action.payload] ?? {},
         graphSyncStatus: 'idle',
         outputGenStatuses: {},
         scheduleModalOutputId: null,
