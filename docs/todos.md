@@ -70,13 +70,41 @@ Extracted from the sync between Richard, Thomas, and Arshath. Ordered by impleme
 
 > Standalone features that enhance the demo narrative.
 
-- [ ] **21. Share to Slack button** — Add a "Share to Slack" button on report views. Show a preview of what the Slack message would look like (mock card with report summary, link, metadata). Doesn't need to actually send. *(All demos)*
+- [x] **21. Share to Slack button** — Add a "Share to Slack" button on report views. Show a preview of what the Slack message would look like (mock card with report summary, link, metadata). Doesn't need to actually send. *(All demos)*
 
 ---
 
-## Phase 8: Nice-to-Have
+## Phase 8: Output Generation & Scheduling
+
+> Extracted from Demo Prep sync (2026-03-05). Thomas and Mohamed agreed outputs should be generated and scheduled independently, not all-at-once.
+
+- [ ] **22. Per-output generate buttons** — Replace the current "Run Analysis generates everything" flow. Each output card in the Outputs panel should have its own "Generate" button (like Google NotebookLM). The processing animation should apply per-output rather than globally. Context graph extraction still runs as a prerequisite step, but individual outputs are generated on demand. *(All demos)*
+- [ ] **23. Separate context graph sync from output generation** — Split "Run Analysis" into two distinct steps: (1) "Sync Context Graph" — extracts entities from sources and builds/refreshes the graph, (2) "Generate Output" — synthesizes a specific report from the context graph. The graph sync is cheaper and can run frequently (daily); output generation is heavier and runs less often. Add a "Sync" button or auto-sync indicator in the Context Graph panel header. *(All demos)*
+- [ ] **24. Per-output scheduling** — Each output card should have a "Schedule" option (e.g., click "..." menu → "Schedule"). Opens a modal with frequency (daily, weekly, monthly, custom), day/time, and notification channel. Context graph sync has its own schedule (suggest daily default). Show a small schedule badge on output cards that have an active schedule (e.g., "Weekly · Mon 9am"). *(All demos)*
+
+---
+
+## Phase 9: Run History & Monitoring
+
+> Thomas suggested a history of runs, like a monitoring/PR inbox view. Helps answer "Do we have to run it every time?" during demos.
+
+- [ ] **25. Run History screen** — New sidebar icon (e.g., clock or activity icon) leading to a monitoring/history view. Shows a table of past synthesis runs: project name, output name, status (success/failed/running), date, duration. Each row is clickable to view the generated output. Looks like a PR inbox or CI dashboard. *(All demos)*
+- [ ] **26. Run History per-project** — When inside a project workspace, clicking an output card could show historical versions (a thread of past runs for that specific output). Allow navigating between versions. *(All demos — stretch)*
+
+---
+
+## Phase 10: Company Memory (Placeholder)
+
+> Thomas suggested hinting at cross-project shared memory during demos without building the full feature. Key talking point for differentiation.
+
+- [ ] **27. Company Memory sidebar stub** — Add a "Company Memory" icon/button in the left sidebar (below Skills, above Settings). Clicking it shows a placeholder page with a title ("Company Memory"), a brief description ("Shared knowledge graph across all projects"), and maybe a few mock stats (e.g., "14 entities · 3 projects contributing · Last synced 2h ago"). Purpose: plant the seed during demos without building real functionality. *(All demos — demo narrative)*
+
+---
+
+## Phase 11: Nice-to-Have
 
 > Lower priority. Build if time permits.
 
-- [ ] **22. Scheduling UI** — Schedule synthesis runs on a recurring basis ("Run every Monday at 9am"). Modal with frequency options (daily, weekly, custom) and notification preferences. Explicitly called "nice to have". Would require hosted infra to actually work. *(All demos — conceptual)*
-- [ ] **23. Default extraction presets per source type** — Refinement of #20. Auto-check relevant extractions when a source type is added (e.g., transcripts auto-select "opportunity extraction"). Different presets for tickets, analytics, docs, etc. *(All demos)*
+- [ ] **28. Default extraction presets per source type** — Refinement of #20. Auto-check relevant extractions when a source type is added (e.g., transcripts auto-select "opportunity extraction"). Different presets for tickets, analytics, docs, etc. *(All demos)*
+- [ ] **29. Context graph alerts/insights** — Richard noted the context graph can surface alerts without full reports (e.g., "spike in feature requests for X"). Add a small "Insights" badge or notification dot on the context graph when patterns are detected. Mock 1-2 alert cards. *(Future — not for current sprint)*
+- [ ] **30. Cross-project output sharing** — Richard described a scenario where outputs from one project (e.g., 4Ps weekly reports) feed as inputs into another project (e.g., monthly progress reporting). Would need a "Link output as source" mechanism. *(Future — architectural)*

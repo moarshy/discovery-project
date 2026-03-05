@@ -1,30 +1,19 @@
 import { motion } from 'framer-motion';
-import type { ProcessingStatus } from '../types';
+import type { GraphSyncStatus } from '../types';
 
 interface ProcessingOverlayProps {
-  status: ProcessingStatus;
-  context: 'graph' | 'output';
+  status: GraphSyncStatus;
 }
 
-const phaseLabels: Record<string, Record<ProcessingStatus, string>> = {
-  graph: {
-    idle: '',
-    extracting: 'Extracting entities...',
-    graphing: 'Building knowledge graph...',
-    generating: 'Finalizing graph...',
-    done: '',
-  },
-  output: {
-    idle: '',
-    extracting: 'Waiting for entities...',
-    graphing: 'Analyzing relationships...',
-    generating: 'Generating reports...',
-    done: '',
-  },
+const phaseLabels: Record<GraphSyncStatus, string> = {
+  idle: '',
+  extracting: 'Extracting entities...',
+  graphing: 'Building knowledge graph...',
+  synced: '',
 };
 
-export function ProcessingOverlay({ status, context }: ProcessingOverlayProps) {
-  const label = phaseLabels[context]?.[status] || '';
+export function ProcessingOverlay({ status }: ProcessingOverlayProps) {
+  const label = phaseLabels[status];
   if (!label) return null;
 
   return (

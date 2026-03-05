@@ -100,8 +100,21 @@ export interface Report {
   generatedAt: string;
 }
 
-// Processing pipeline
-export type ProcessingStatus = 'idle' | 'extracting' | 'graphing' | 'generating' | 'done';
+// Graph sync pipeline (independent from output generation)
+export type GraphSyncStatus = 'idle' | 'extracting' | 'graphing' | 'synced';
+export type OutputGenStatus = 'idle' | 'generating' | 'done';
+
+export interface OutputSchedule {
+  frequency: 'daily' | 'weekly' | 'monthly';
+  day?: string;        // 'Mon', 'Tue', etc. — for weekly
+  dayOfMonth?: number; // 1-28 — for monthly
+  time: string;        // '09:00'
+}
+
+export interface GraphSyncSchedule {
+  frequency: 'daily' | 'weekly';
+  time: string;
+}
 
 // Theme
 export type Theme = 'dark' | 'light';
@@ -151,7 +164,11 @@ export interface AppState {
   hoveredNodeId: string | null;
   focusNodeId: string | null;
   graphFilters: GraphFilterState;
-  processingStatus: ProcessingStatus;
+  graphSyncStatus: GraphSyncStatus;
+  outputGenStatuses: Record<string, OutputGenStatus>;
+  outputSchedules: Record<string, OutputSchedule>;
+  graphSyncSchedule: GraphSyncSchedule | null;
+  scheduleModalOutputId: string | null;
   theme: Theme;
   skills: Skill[];
   sourceSkillAssignments: SourceSkillAssignments;
@@ -182,8 +199,16 @@ export type AppAction =
   | { type: 'TOGGLE_ENTITY_TYPE_FILTER'; payload: EntityTypeName }
   | { type: 'TOGGLE_EDGE_TYPE_FILTER'; payload: EdgeType }
   | { type: 'CLEAR_FOCUS_MODE' }
-  | { type: 'START_PROCESSING' }
-  | { type: 'SET_PROCESSING_STATUS'; payload: ProcessingStatus }
+  | { type: 'START_GRAPH_SYNC' }
+  | { type: 'SET_GRAPH_SYNC_STATUS'; payload: GraphSyncStatus }
+  | { type: 'START_OUTPUT_GENERATION'; payload: string }
+  | { type: 'SET_OUTPUT_GEN_STATUS'; payload: { reportId: string; status: OutputGenStatus } }
+  | { type: 'GENERATE_ALL_OUTPUTS'; payload: string[] }
+  | { type: 'OPEN_SCHEDULE_MODAL'; payload: string }
+  | { type: 'CLOSE_SCHEDULE_MODAL' }
+  | { type: 'SET_OUTPUT_SCHEDULE'; payload: { reportId: string; schedule: OutputSchedule } }
+  | { type: 'REMOVE_OUTPUT_SCHEDULE'; payload: string }
+  | { type: 'SET_GRAPH_SYNC_SCHEDULE'; payload: GraphSyncSchedule | null }
   | { type: 'TOGGLE_THEME' }
   | { type: 'NAVIGATE_TO_SKILLS' }
   | { type: 'TOGGLE_SKILL'; payload: SkillId }

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, PanelLeftOpen, Play, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, PanelLeftOpen } from 'lucide-react';
 import { useApp } from '../store';
 import { useProjectData } from '../hooks/useProjectData';
 import { seededProjectIds } from '../data/project-registry';
@@ -8,7 +8,8 @@ import { SourcePanel } from './sources/SourcePanel';
 import { ContextGraph } from './graph/ContextGraph';
 import { OutputPanel } from './outputs/OutputPanel';
 import { ReportViewer } from './outputs/ReportViewer';
-import type { ProcessingStatus } from '../types';
+import { ScheduleModal } from './outputs/ScheduleModal';
+import type { GraphSyncStatus } from '../types';
 
 const SOURCE_MIN = 200;
 const SOURCE_MAX = 400;
@@ -17,59 +18,68 @@ const SOURCE_COLLAPSED = 0;
 const GRAPH_MIN = 300;
 const OUTPUT_MIN = 260;
 
-const statusLabels: Record<ProcessingStatus, string> = {
-  idle: '',
-  extracting: 'Extracting entities...',
-  graphing: 'Building graph...',
-  generating: 'Generating reports...',
-  done: 'Complete',
-};
-
 export function ProjectWorkspace() {
   const { state, dispatch } = useApp();
   const project = state.projects.find((p) => p.id === state.activeProjectId);
   const projectData = useProjectData();
   const isSeeded = state.activeProjectId ? seededProjectIds.has(state.activeProjectId) : false;
-  const { processingStatus } = state;
+  const { graphSyncStatus, outputGenStatuses } = state;
 
   // Phased data gating
-  const hasEntities = ['graphing', 'generating', 'done'].includes(processingStatus);
-  const hasGraph = ['generating', 'done'].includes(processingStatus);
-  const hasOutputs = processingStatus === 'done';
+  const hasEntities = ['graphing', 'synced'].includes(graphSyncStatus);
+  const hasGraph = graphSyncStatus === 'synced';
 
   const activeReport =
-    hasOutputs && state.activeOutputId && projectData
+    state.activeOutputId && projectData
       ? projectData.reports.find((r) => r.id === state.activeOutputId)
       : null;
 
-  // Timer orchestration for processing phases
-  useEffect(() => {
-    if (processingStatus === 'idle' || processingStatus === 'done') return;
+  // Check if this report is done before showing the viewer
+  const reportDone = state.activeOutputId ? outputGenStatuses[state.activeOutputId] === 'done' : false;
 
-    const nextPhase: Record<string, ProcessingStatus> = {
+  // Graph sync timer: extracting → graphing → synced (2s each)
+  useEffect(() => {
+    if (graphSyncStatus === 'idle' || graphSyncStatus === 'synced') return;
+
+    const next: Record<string, GraphSyncStatus> = {
       extracting: 'graphing',
-      graphing: 'generating',
-      generating: 'done',
+      graphing: 'synced',
     };
 
-    const next = nextPhase[processingStatus];
-    if (!next) return;
-
     const timer = setTimeout(() => {
-      // Auto-switch to graph view when graphing starts
-      if (processingStatus === 'extracting') {
+      if (graphSyncStatus === 'extracting') {
         dispatch({ type: 'SET_GRAPH_VIEW', payload: 'graph' });
       }
-      dispatch({ type: 'SET_PROCESSING_STATUS', payload: next });
+      dispatch({ type: 'SET_GRAPH_SYNC_STATUS', payload: next[graphSyncStatus] });
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [processingStatus, dispatch]);
+  }, [graphSyncStatus, dispatch]);
+
+  // Per-output generation timer: generating → done (2.5s each)
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    for (const [reportId, status] of Object.entries(outputGenStatuses)) {
+      if (status === 'generating') {
+        timers.push(
+          setTimeout(() => {
+            dispatch({ type: 'SET_OUTPUT_GEN_STATUS', payload: { reportId, status: 'done' } });
+          }, 2500)
+        );
+      }
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [outputGenStatuses, dispatch]);
+
+  // Schedule modal
+  const scheduleReport =
+    state.scheduleModalOutputId && projectData
+      ? projectData.reports.find((r) => r.id === state.scheduleModalOutputId)
+      : null;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [sourceWidth, setSourceWidth] = useState(SOURCE_DEFAULT);
   const [sourceCollapsed, setSourceCollapsed] = useState(false);
-  // graphRatio is the fraction of remaining space (after source) that goes to the graph panel
   const [graphRatio, setGraphRatio] = useState(0.55);
 
   const draggingRef = useRef<'source' | 'graph' | null>(null);
@@ -93,7 +103,6 @@ export function ProjectWorkspace() {
 
       if (draggingRef.current === 'source') {
         const clamped = Math.max(SOURCE_MIN, Math.min(SOURCE_MAX, x));
-        // Ensure remaining space can fit graph + output minimums
         const remaining = totalWidth - clamped;
         if (remaining >= GRAPH_MIN + OUTPUT_MIN) {
           setSourceWidth(clamped);
@@ -104,7 +113,6 @@ export function ProjectWorkspace() {
         const remaining = totalWidth - sw;
         const graphX = x - sw;
         const ratio = graphX / remaining;
-        // Enforce minimums
         const graphPx = ratio * remaining;
         const outputPx = remaining - graphPx;
         if (graphPx >= GRAPH_MIN && outputPx >= OUTPUT_MIN) {
@@ -133,8 +141,6 @@ export function ProjectWorkspace() {
 
   const COLLAPSED_RAIL = 40;
   const effectiveSourceWidth = sourceCollapsed ? COLLAPSED_RAIL : sourceWidth;
-  const isProcessing = !['idle', 'done'].includes(processingStatus);
-  const canRun = isSeeded && processingStatus === 'idle';
 
   return (
     <div className="h-full flex flex-col">
@@ -149,52 +155,6 @@ export function ProjectWorkspace() {
         <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">
           {project.name}
         </h2>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Run button / status pill */}
-        <AnimatePresence mode="wait">
-          {canRun && (
-            <motion.button
-              key="run-btn"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              onClick={() => dispatch({ type: 'START_PROCESSING' })}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-accent)] text-white text-xs font-medium hover:brightness-110 transition-all"
-            >
-              <Play className="w-3.5 h-3.5" />
-              Run Analysis
-            </motion.button>
-          )}
-
-          {isProcessing && (
-            <motion.div
-              key="status-pill"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 text-xs font-medium text-[var(--color-accent)]"
-            >
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              {statusLabels[processingStatus]}
-            </motion.div>
-          )}
-
-          {processingStatus === 'done' && (
-            <motion.div
-              key="done-pill"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-xs font-medium text-green-400"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Complete
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Three-panel layout */}
@@ -229,7 +189,7 @@ export function ProjectWorkspace() {
           )}
         </AnimatePresence>
 
-        {/* Resize handle: source ↔ graph */}
+        {/* Resize handle: source <-> graph */}
         {!sourceCollapsed && (
           <div
             onPointerDown={(e) => handlePointerDown('source', e)}
@@ -245,10 +205,10 @@ export function ProjectWorkspace() {
           className="shrink-0 overflow-hidden border-r border-[var(--color-border)]"
           style={{ width: `calc((100% - ${effectiveSourceWidth}px) * ${graphRatio})` }}
         >
-          <ContextGraph hasEntities={hasEntities} processingStatus={processingStatus} />
+          <ContextGraph hasEntities={hasEntities} graphSyncStatus={graphSyncStatus} isSeeded={isSeeded} />
         </div>
 
-        {/* Resize handle: graph ↔ output */}
+        {/* Resize handle: graph <-> output */}
         <div
           onPointerDown={(e) => handlePointerDown('graph', e)}
           className="w-1 shrink-0 cursor-col-resize group relative z-10 -ml-px"
@@ -259,13 +219,31 @@ export function ProjectWorkspace() {
 
         {/* Output panel */}
         <div className="flex-1 min-w-0 overflow-hidden">
-          {activeReport ? (
+          {activeReport && reportDone ? (
             <ReportViewer report={activeReport} />
           ) : (
-            <OutputPanel hasOutputs={hasOutputs} processingStatus={processingStatus} />
+            <OutputPanel graphSynced={hasGraph} />
           )}
         </div>
       </div>
+
+      {/* Schedule modal */}
+      {scheduleReport && state.scheduleModalOutputId && (
+        <ScheduleModal
+          report={scheduleReport}
+          existingSchedule={state.outputSchedules[state.scheduleModalOutputId]}
+          onSave={(schedule) =>
+            dispatch({
+              type: 'SET_OUTPUT_SCHEDULE',
+              payload: { reportId: state.scheduleModalOutputId!, schedule },
+            })
+          }
+          onRemove={() =>
+            dispatch({ type: 'REMOVE_OUTPUT_SCHEDULE', payload: state.scheduleModalOutputId! })
+          }
+          onClose={() => dispatch({ type: 'CLOSE_SCHEDULE_MODAL' })}
+        />
+      )}
     </div>
   );
 }

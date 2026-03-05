@@ -18,7 +18,11 @@ export const initialState: AppState = {
   hoveredNodeId: null,
   focusNodeId: null,
   graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
-  processingStatus: 'idle',
+  graphSyncStatus: 'idle',
+  outputGenStatuses: {},
+  outputSchedules: {},
+  graphSyncSchedule: null,
+  scheduleModalOutputId: null,
   theme: 'dark',
   skills: defaultSkills,
   sourceSkillAssignments: { ...defaultSourceSkillAssignments },
@@ -45,7 +49,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
         sourceSkillAssignments: {},
         sourceWeights: {},
-        processingStatus: 'idle',
+        graphSyncStatus: 'idle',
+        outputGenStatuses: {},
+        scheduleModalOutputId: null,
+        // Keep outputSchedules and graphSyncSchedule (persist across visits)
       };
     case 'NAVIGATE_TO_PROJECTS':
       return {
@@ -55,7 +62,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedSourceId: null,
         selectedEntityId: null,
         activeOutputId: null,
-        processingStatus: 'idle',
+        graphSyncStatus: 'idle',
+        outputGenStatuses: {},
+        scheduleModalOutputId: null,
         skillPopoverSourceId: null,
       };
     case 'NAVIGATE_TO_INTEGRATIONS':
@@ -194,15 +203,73 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         focusNodeId: null,
       };
-    case 'START_PROCESSING':
+    case 'START_GRAPH_SYNC':
       return {
         ...state,
-        processingStatus: 'extracting',
+        graphSyncStatus: 'extracting',
       };
-    case 'SET_PROCESSING_STATUS':
+    case 'SET_GRAPH_SYNC_STATUS':
       return {
         ...state,
-        processingStatus: action.payload,
+        graphSyncStatus: action.payload,
+      };
+    case 'START_OUTPUT_GENERATION':
+      return {
+        ...state,
+        outputGenStatuses: {
+          ...state.outputGenStatuses,
+          [action.payload]: 'generating',
+        },
+      };
+    case 'SET_OUTPUT_GEN_STATUS':
+      return {
+        ...state,
+        outputGenStatuses: {
+          ...state.outputGenStatuses,
+          [action.payload.reportId]: action.payload.status,
+        },
+      };
+    case 'GENERATE_ALL_OUTPUTS': {
+      const next: Record<string, 'generating'> = {};
+      for (const id of action.payload) {
+        next[id] = 'generating';
+      }
+      return {
+        ...state,
+        outputGenStatuses: { ...state.outputGenStatuses, ...next },
+      };
+    }
+    case 'OPEN_SCHEDULE_MODAL':
+      return {
+        ...state,
+        scheduleModalOutputId: action.payload,
+      };
+    case 'CLOSE_SCHEDULE_MODAL':
+      return {
+        ...state,
+        scheduleModalOutputId: null,
+      };
+    case 'SET_OUTPUT_SCHEDULE':
+      return {
+        ...state,
+        outputSchedules: {
+          ...state.outputSchedules,
+          [action.payload.reportId]: action.payload.schedule,
+        },
+        scheduleModalOutputId: null,
+      };
+    case 'REMOVE_OUTPUT_SCHEDULE': {
+      const { [action.payload]: _, ...rest } = state.outputSchedules;
+      return {
+        ...state,
+        outputSchedules: rest,
+        scheduleModalOutputId: null,
+      };
+    }
+    case 'SET_GRAPH_SYNC_SCHEDULE':
+      return {
+        ...state,
+        graphSyncSchedule: action.payload,
       };
     case 'TOGGLE_THEME':
       return {
