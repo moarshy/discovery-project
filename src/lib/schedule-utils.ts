@@ -24,3 +24,25 @@ export function formatSyncSchedule(s: GraphSyncSchedule): string {
   const t = formatTime(s.time);
   return `Syncs ${s.frequency} at ${t}`;
 }
+
+const DEMO_NOW = new Date('2026-03-05T16:00:00Z').getTime();
+
+export function formatRelativeTime(iso: string): string {
+  const diff = DEMO_NOW - new Date(iso).getTime();
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return 'Just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+export function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (s === 0) return `${m}m`;
+  return `${m}m ${s}s`;
+}

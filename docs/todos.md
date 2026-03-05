@@ -78,9 +78,9 @@ Extracted from the sync between Richard, Thomas, and Arshath. Ordered by impleme
 
 > Extracted from Demo Prep sync (2026-03-05). Thomas and Mohamed agreed outputs should be generated and scheduled independently, not all-at-once.
 
-- [ ] **22. Per-output generate buttons** — Replace the current "Run Analysis generates everything" flow. Each output card in the Outputs panel should have its own "Generate" button (like Google NotebookLM). The processing animation should apply per-output rather than globally. Context graph extraction still runs as a prerequisite step, but individual outputs are generated on demand. *(All demos)*
-- [ ] **23. Separate context graph sync from output generation** — Split "Run Analysis" into two distinct steps: (1) "Sync Context Graph" — extracts entities from sources and builds/refreshes the graph, (2) "Generate Output" — synthesizes a specific report from the context graph. The graph sync is cheaper and can run frequently (daily); output generation is heavier and runs less often. Add a "Sync" button or auto-sync indicator in the Context Graph panel header. *(All demos)*
-- [ ] **24. Per-output scheduling** — Each output card should have a "Schedule" option (e.g., click "..." menu → "Schedule"). Opens a modal with frequency (daily, weekly, monthly, custom), day/time, and notification channel. Context graph sync has its own schedule (suggest daily default). Show a small schedule badge on output cards that have an active schedule (e.g., "Weekly · Mon 9am"). *(All demos)*
+- [x] **22. Per-output generate buttons** — Replace the current "Run Analysis generates everything" flow. Each output card in the Outputs panel should have its own "Generate" button (like Google NotebookLM). The processing animation should apply per-output rather than globally. Context graph extraction still runs as a prerequisite step, but individual outputs are generated on demand. *(All demos)*
+- [x] **23. Separate context graph sync from output generation** — Split "Run Analysis" into two distinct steps: (1) "Sync Context Graph" — extracts entities from sources and builds/refreshes the graph, (2) "Generate Output" — synthesizes a specific report from the context graph. The graph sync is cheaper and can run frequently (daily); output generation is heavier and runs less often. Add a "Sync" button or auto-sync indicator in the Context Graph panel header. *(All demos)*
+- [x] **24. Per-output scheduling** — Each output card should have a "Schedule" option (e.g., click "..." menu → "Schedule"). Opens a modal with frequency (daily, weekly, monthly, custom), day/time, and notification channel. Context graph sync has its own schedule (suggest daily default). Show a small schedule badge on output cards that have an active schedule (e.g., "Weekly · Mon 9am"). *(All demos)*
 
 ---
 
@@ -88,8 +88,8 @@ Extracted from the sync between Richard, Thomas, and Arshath. Ordered by impleme
 
 > Thomas suggested a history of runs, like a monitoring/PR inbox view. Helps answer "Do we have to run it every time?" during demos.
 
-- [ ] **25. Run History screen** — New sidebar icon (e.g., clock or activity icon) leading to a monitoring/history view. Shows a table of past synthesis runs: project name, output name, status (success/failed/running), date, duration. Each row is clickable to view the generated output. Looks like a PR inbox or CI dashboard. *(All demos)*
-- [ ] **26. Run History per-project** — When inside a project workspace, clicking an output card could show historical versions (a thread of past runs for that specific output). Allow navigating between versions. *(All demos — stretch)*
+- [x] **25. Run History screen** — New sidebar icon (e.g., clock or activity icon) leading to a monitoring/history view. Shows a table of past synthesis runs: project name, output name, status (success/failed/running), date, duration. Each row is clickable to view the generated output. Looks like a PR inbox or CI dashboard. *(All demos)*
+- [x] **26. Run History per-project** — When inside a project workspace, clicking an output card could show historical versions (a thread of past runs for that specific output). Allow navigating between versions. *(All demos — stretch)*
 
 ---
 

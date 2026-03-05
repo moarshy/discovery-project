@@ -7,6 +7,7 @@ import {
 import { useApp } from '../../store';
 import { useProjectData } from '../../hooks/useProjectData';
 import { OutputCardMenu } from './OutputCardMenu';
+import { VersionHistoryButton } from './VersionHistoryButton';
 import { formatSchedule } from '../../lib/schedule-utils';
 import type { OutputGenStatus } from '../../types';
 
@@ -169,13 +170,16 @@ export function OutputPanel({ graphSynced }: OutputPanelProps) {
                       </button>
                     )}
                     {isDone && (
-                      <button
-                        onClick={() => dispatch({ type: 'OPEN_OUTPUT', payload: report.id })}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors"
-                      >
-                        <FileText className="w-3 h-3" />
-                        View Report
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => dispatch({ type: 'OPEN_OUTPUT', payload: report.id })}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors"
+                        >
+                          <FileText className="w-3 h-3" />
+                          View Report
+                        </button>
+                        <VersionHistoryButton reportId={report.id} />
+                      </div>
                     )}
                   </div>
                 </div>

@@ -116,6 +116,25 @@ export interface GraphSyncSchedule {
   time: string;
 }
 
+// Run history
+export type RunStatus = 'success' | 'running' | 'failed';
+
+export interface RunHistoryEntry {
+  id: string;
+  projectId: string;
+  projectName: string;
+  reportId: string;
+  reportTitle: string;
+  reportType: string;
+  status: RunStatus;
+  startedAt: string;       // ISO 8601
+  duration: number | null;  // seconds, null if running
+  version: number;
+  triggerType: 'manual' | 'scheduled';
+}
+
+export type RunHistoryFilter = 'all' | 'running' | 'completed' | 'failed';
+
 // Theme
 export type Theme = 'dark' | 'light';
 
@@ -141,7 +160,7 @@ export type SourceSkillAssignments = Record<string, SkillId[]>;
 
 export type SourceWeights = Record<string, number>;  // sourceId → weight (0..2, default 1)
 
-export type Screen = 'projects' | 'workspace' | 'integrations' | 'skills';
+export type Screen = 'projects' | 'workspace' | 'integrations' | 'skills' | 'history';
 export type GraphViewMode = 'table' | 'graph';
 export type AddSourceStep = 'closed' | 'pick-integration' | 'browse-items';
 
@@ -221,4 +240,6 @@ export type AppAction =
   | { type: 'SELECT_SKILL'; payload: SkillId }
   | { type: 'DESELECT_SKILL' }
   | { type: 'UPDATE_SKILL'; payload: { id: SkillId; name: string; description: string; instructions: string } }
-  | { type: 'SET_SOURCE_WEIGHT'; payload: { sourceId: string; weight: number } };
+  | { type: 'SET_SOURCE_WEIGHT'; payload: { sourceId: string; weight: number } }
+  | { type: 'NAVIGATE_TO_HISTORY' }
+  | { type: 'VIEW_RUN_OUTPUT'; payload: { projectId: string; reportId: string } };

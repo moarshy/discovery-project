@@ -361,6 +361,32 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           [action.payload.sourceId]: action.payload.weight,
         },
       };
+    case 'NAVIGATE_TO_HISTORY':
+      return {
+        ...state,
+        screen: 'history',
+        activeProjectId: null,
+        selectedSourceId: null,
+        selectedEntityId: null,
+        activeOutputId: null,
+        skillPopoverSourceId: null,
+        editingSkillId: null,
+      };
+    case 'VIEW_RUN_OUTPUT':
+      return {
+        ...state,
+        screen: 'workspace',
+        activeProjectId: action.payload.projectId,
+        activeOutputId: action.payload.reportId,
+        selectedSourceId: null,
+        selectedEntityId: null,
+        graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
+        sourceSkillAssignments: {},
+        sourceWeights: {},
+        graphSyncStatus: 'synced',
+        outputGenStatuses: { [action.payload.reportId]: 'done' },
+        scheduleModalOutputId: null,
+      };
     default:
       return state;
   }

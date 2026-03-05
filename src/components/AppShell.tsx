@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, Puzzle, Zap, Settings, Sun, Moon } from 'lucide-react';
+import { Layers, Puzzle, Zap, Activity, Settings, Sun, Moon } from 'lucide-react';
 import { useApp } from '../store';
 import { ProjectsList } from './ProjectsList';
 import { ProjectWorkspace } from './ProjectWorkspace';
 import { IntegrationsPage } from './IntegrationsPage';
 import { SkillsPage } from './SkillsPage';
+import { RunHistoryPage } from './RunHistoryPage';
 import type { Screen } from '../types';
 
 export function AppShell() {
@@ -14,6 +15,7 @@ export function AppShell() {
     if (screen === 'projects') dispatch({ type: 'NAVIGATE_TO_PROJECTS' });
     else if (screen === 'integrations') dispatch({ type: 'NAVIGATE_TO_INTEGRATIONS' });
     else if (screen === 'skills') dispatch({ type: 'NAVIGATE_TO_SKILLS' });
+    else if (screen === 'history') dispatch({ type: 'NAVIGATE_TO_HISTORY' });
   }
 
   return (
@@ -68,6 +70,17 @@ export function AppShell() {
             title="Skills"
           >
             <Zap className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => handleNav('history')}
+            className={`p-2 rounded-lg transition-colors ${
+              state.screen === 'history'
+                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
+            }`}
+            title="Run History"
+          >
+            <Activity className="w-5 h-5" />
           </button>
           <div className="flex-1" />
           <button
@@ -134,6 +147,18 @@ export function AppShell() {
                 className="h-full"
               >
                 <SkillsPage />
+              </motion.div>
+            )}
+            {state.screen === 'history' && (
+              <motion.div
+                key="history"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+                className="h-full"
+              >
+                <RunHistoryPage />
               </motion.div>
             )}
           </AnimatePresence>
