@@ -52,12 +52,7 @@ export interface ExtractedEntity {
   sourceRefs: string[];
 }
 
-export type EntityTypeName =
-  | 'strategic-bet'
-  | 'experiment'
-  | 'opportunity'
-  | 'pain-point'
-  | 'feature-request';
+export type EntityTypeName = string;
 
 export interface EntityType {
   id: EntityTypeName;
@@ -98,7 +93,7 @@ export interface ReportSection {
 export interface Report {
   id: string;
   title: string;
-  type: 'report' | 'prd' | 'business-case';
+  type: string;
   description: string;
   sections: ReportSection[];
   sourceCount: number;

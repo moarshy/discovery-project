@@ -1,27 +1,13 @@
-import type { EntityTypeName, EdgeType } from '../types';
+import type { EntityType, EntityTypeName, EdgeType, GraphNode, GraphEdge, ExtractedEntity, Source } from '../types';
 
-const entityTypeColors: Record<EntityTypeName, string> = {
-  'strategic-bet': '#6366F1',
-  'experiment': '#8B5CF6',
-  'opportunity': '#10B981',
-  'pain-point': '#F59E0B',
-  'feature-request': '#06B6D4',
-};
-
-export function getEntityTypeColor(type: EntityTypeName): string {
-  return entityTypeColors[type];
+export function getEntityTypeColor(type: EntityTypeName, entityTypes: EntityType[]): string {
+  const et = entityTypes.find((e) => e.id === type);
+  return et?.color ?? '#6b7280';
 }
 
-const entityTypeLabels: Record<EntityTypeName, string> = {
-  'strategic-bet': 'Strategic Bet',
-  'experiment': 'Experiment',
-  'opportunity': 'Opportunity',
-  'pain-point': 'Pain Point',
-  'feature-request': 'Feature Request',
-};
-
-export function getEntityTypeLabel(type: EntityTypeName): string {
-  return entityTypeLabels[type];
+export function getEntityTypeLabel(type: EntityTypeName, entityTypes: EntityType[]): string {
+  const et = entityTypes.find((e) => e.id === type);
+  return et?.label ?? type;
 }
 
 const edgeColors: Record<EdgeType, string> = {
@@ -44,4 +30,44 @@ const edgeLabels: Record<EdgeType, string> = {
 
 export function getEdgeLabel(type: EdgeType): string {
   return edgeLabels[type];
+}
+
+/**
+ * Build graph nodes and edges from entities, sources, and cross-entity relationships.
+ */
+export function buildGraphData(
+  sources: Source[],
+  entities: ExtractedEntity[],
+  entityTypes: EntityType[],
+  crossEdges: GraphEdge[],
+): { nodes: GraphNode[]; edges: GraphEdge[] } {
+  const entityNodes: GraphNode[] = entities.map((e) => ({
+    id: e.id,
+    label: e.name,
+    type: 'entity' as const,
+    color: getEntityTypeColor(e.type, entityTypes),
+    group: e.type,
+  }));
+
+  const sourceNodes: GraphNode[] = sources.map((s) => ({
+    id: s.id,
+    label: s.name,
+    type: 'source' as const,
+    color: '#6b7280',
+    group: s.category,
+  }));
+
+  const mentionEdges: GraphEdge[] = entities.flatMap((e) =>
+    e.sourceRefs.map((srcId) => ({
+      source: e.id,
+      target: srcId,
+      relationship: 'mentions' as const,
+      weight: 0.5,
+    }))
+  );
+
+  return {
+    nodes: [...entityNodes, ...sourceNodes],
+    edges: [...mentionEdges, ...crossEdges],
+  };
 }

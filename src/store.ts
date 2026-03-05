@@ -42,6 +42,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedSourceId: null,
         selectedEntityId: null,
         activeOutputId: null,
+        graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
+        sourceSkillAssignments: {},
+        sourceWeights: {},
+        processingStatus: 'idle',
       };
     case 'NAVIGATE_TO_PROJECTS':
       return {

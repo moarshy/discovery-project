@@ -35,12 +35,12 @@ Extracted from the sync between Richard, Thomas, and Arshath. Ordered by impleme
 
 > Needed before demo projects make sense. Each needs a report template with sections, mock content, and source citations.
 
-- [ ] **7. Vocabulary Map report** — Maps internal jargon vs. customer language vs. brand language for the same concepts. Could also appear as an intermediate context graph view. *(Bellina)*
-- [ ] **8. Brand Strategy report** — Synthesizes interviews, tickets, and discussions into a rebranding recommendation. Sections: findings, recommendations, supporting evidence. *(Bellina)*
-- [ ] **9. Tensions report** — Highlights contradictions between sources: "vision vs. customer reality", "sales promise vs. support reality". Present tension pairs with supporting quotes from each side. *(Bellina, potentially all)*
-- [ ] **10. OKR Report** — Synthesizes Confluence OKR pages + Airtable learning records into an alignment/progress report. *(Autodesk)*
-- [ ] **11. VOC Report (verify/extend)** — Verify existing VOC report covers Intercom support ticket synthesis with themes, sentiment, and actionable insights. Extend if needed. *(Autodesk)*
-- [ ] **12. Analytics Report** — Synthesizes Mixpanel analytics data + support tickets into a diagnostic report (e.g., why activation is declining). *(SoSafe)*
+- [x] **7. Vocabulary Map report** — Maps internal jargon vs. customer language vs. brand language for the same concepts. Could also appear as an intermediate context graph view. *(Bellina)*
+- [x] **8. Brand Strategy report** — Synthesizes interviews, tickets, and discussions into a rebranding recommendation. Sections: findings, recommendations, supporting evidence. *(Bellina)*
+- [x] **9. Tensions report** — Highlights contradictions between sources: "vision vs. customer reality", "sales promise vs. support reality". Present tension pairs with supporting quotes from each side. *(Bellina, potentially all)*
+- [x] **10. OKR Report** — Synthesizes Confluence OKR pages + Airtable learning records into an alignment/progress report. Plus Experiment Insights and 4Ps Progress Summary reports. *(Autodesk)*
+- [x] **11. VOC Report (verify/extend)** — Monthly VoC Report + Feature Request Prioritization report. Covers themes, sentiment, evidence matrix, and feature request ranking. *(Autodesk)*
+- [x] **12. Analytics Report** — Feature Activation Report + Funnel Diagnostic + Activation Playbook. Synthesizes Mixpanel analytics + support tickets. *(SoSafe)*
 
 ---
 
@@ -48,11 +48,11 @@ Extracted from the sync between Richard, Thomas, and Arshath. Ordered by impleme
 
 > Assemble specific demo projects using the integrations and reports from Phases 3-4.
 
-- [ ] **13. Bellina demo project** — "Rebranding Decision" project. Sources: interview transcripts, support tickets, Slack discussions. Outputs: vocabulary map, brand strategy report, tensions report. *(Bellina)*
-- [ ] **14. Autodesk VOC demo project** — Voice of Customer project. Sources: Intercom support tickets. Output: VOC report. *(Autodesk)*
-- [ ] **15. Autodesk OKR demo project** — OKR Alignment project. Sources: Confluence OKRs, Airtable learnings. Output: OKR report. *(Autodesk)*
-- [ ] **16. SoSafe demo project** — Analytics Investigation project. Sources: Mixpanel data, support tickets. Output: analytics report on activation decline. *(SoSafe)*
-- [ ] **17. Fion demo project** — Synthesis-focused project. Similar to existing seeded data but with source weighting sliders prominently featured. *(Fion)*
+- [x] **13. Bellina demo project** — "Brand Strategy Balena" project. Sources: 2 interview transcripts, support tickets, 2 Slack discussions. Outputs: vocabulary map, brand strategy report, tensions report. *(Bellina)*
+- [x] **14. Autodesk VOC demo project** — "VoC Autodesk" project. Sources: 4 Intercom support tickets/surveys. Outputs: Monthly VoC Report, Feature Request Prioritization. *(Autodesk)*
+- [x] **15. Autodesk OKR demo project** — "OKR Progress Autodesk" project. Sources: Confluence OKRs, Mixpanel, 3 Airtable, 2 weekly reports. Outputs: Monthly OKR Report, Experiment Insights, 4Ps Progress Summary. *(Autodesk)*
+- [x] **16. SoSafe demo project** — "Feature Activation SoSafe" project. Sources: Confluence, Mixpanel, 2 transcripts, 2 support tickets, 1 CRM record. Outputs: Feature Activation Report, Funnel Diagnostic, Activation Playbook. *(SoSafe)*
+- [x] **17. Fion demo project** — "Feature Prioritization Synthflow" project. Sources: 2 strategy docs, 2 interviews, 2 tickets, 1 recording. Outputs: Synthesis Report, PRD, Business Case. *(Fion)*
 
 ---
 

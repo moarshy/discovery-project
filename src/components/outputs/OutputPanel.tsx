@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, ClipboardList, TrendingUp, Plus, CheckCircle2, FileOutput } from 'lucide-react';
+import { FileText, ClipboardList, TrendingUp, Plus, CheckCircle2, FileOutput, Map, BookOpen, AlertTriangle, BarChart3, Target, FlaskConical, ListChecks } from 'lucide-react';
 import { useApp } from '../../store';
-import { reports } from '../../data/reports';
+import { useProjectData } from '../../hooks/useProjectData';
 import { ProcessingOverlay } from '../ProcessingOverlay';
 import type { ProcessingStatus } from '../../types';
 
@@ -9,6 +9,13 @@ const outputIcons: Record<string, React.ComponentType<{ className?: string }>> =
   report: FileText,
   prd: ClipboardList,
   'business-case': TrendingUp,
+  'vocabulary-map': Map,
+  'brand-strategy': BookOpen,
+  'tensions-report': AlertTriangle,
+  'activation-report': BarChart3,
+  'okr-report': Target,
+  'experiment-report': FlaskConical,
+  'progress-report': ListChecks,
 };
 
 interface OutputPanelProps {
@@ -18,7 +25,10 @@ interface OutputPanelProps {
 
 export function OutputPanel({ hasOutputs, processingStatus }: OutputPanelProps) {
   const { dispatch } = useApp();
+  const projectData = useProjectData();
   const isProcessing = !['idle', 'done'].includes(processingStatus);
+
+  const reports = projectData?.reports ?? [];
 
   return (
     <div className="h-full flex flex-col bg-[var(--color-bg)]">

@@ -4,14 +4,14 @@ import { select } from 'd3-selection';
 import { zoom as d3Zoom, zoomIdentity, type D3ZoomEvent } from 'd3-zoom';
 import { useApp } from '../../store';
 import { useGraph } from '../../hooks/useGraph';
-import { graphNodes, graphEdges } from '../../data/graph';
-import { entities } from '../../data/entities';
+import { useProjectData } from '../../hooks/useProjectData';
 import { getEdgeColor } from '../../lib/graph-utils';
 import { GraphFilterBar } from './GraphFilterBar';
 import { EntityDetailPanel } from './EntityDetailPanel';
 
 export function GraphView() {
   const { state, dispatch } = useApp();
+  const projectData = useProjectData();
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -19,6 +19,10 @@ export function GraphView() {
   const draggingRef = useRef<string | null>(null);
   const dragStartPosRef = useRef({ x: 0, y: 0 });
   const lastClickRef = useRef<{ nodeId: string; time: number } | null>(null);
+
+  const graphNodes = projectData?.graphNodes ?? [];
+  const graphEdges = projectData?.graphEdges ?? [];
+  const entities = projectData?.entities ?? [];
 
   // Measure container
   useEffect(() => {

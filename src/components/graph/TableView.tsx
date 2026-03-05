@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
 import { useApp } from '../../store';
-import { entityTypes } from '../../data/entities';
-import { sources } from '../../data/sources';
+import { useProjectData } from '../../hooks/useProjectData';
 import { cn } from '../../lib/utils';
 
 export function TableView() {
   const { state, dispatch } = useApp();
+  const projectData = useProjectData();
+
+  const entityTypes = projectData?.entityTypes ?? [];
+  const sources = projectData?.sources ?? [];
 
   return (
     <div className="h-full overflow-y-auto px-4 py-3">

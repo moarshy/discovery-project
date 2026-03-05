@@ -1,5 +1,5 @@
 import { useApp } from '../../store';
-import { entityTypes } from '../../data/entities';
+import { useProjectData } from '../../hooks/useProjectData';
 import { getEdgeColor, getEdgeLabel } from '../../lib/graph-utils';
 import type { EdgeType } from '../../types';
 
@@ -7,7 +7,10 @@ const edgeTypes: EdgeType[] = ['mentions', 'supports', 'contradicts', 'related']
 
 export function GraphFilterBar() {
   const { state, dispatch } = useApp();
+  const projectData = useProjectData();
   const { hiddenEntityTypes, hiddenEdgeTypes } = state.graphFilters;
+
+  const entityTypes = projectData?.entityTypes ?? [];
 
   return (
     <div className="absolute bottom-4 left-4 flex flex-col gap-2 z-10">

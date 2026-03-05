@@ -6,99 +6,60 @@ import {
   Calendar,
   X,
   ArrowLeft,
-  Lock,
-  Users,
-  BarChart3,
-  Lightbulb,
-  Briefcase,
-  TrendingUp,
   MessageSquare,
-  ClipboardList,
-  Megaphone,
+  Target,
+  Layers,
+  Activity,
+  Palette,
 } from 'lucide-react';
 import { useApp } from '../store';
 import { Button } from './shared/Button';
 
 const projectTypes = [
   {
-    id: 'user-research',
-    name: 'User Research',
-    description: 'Synthesize user interviews, surveys, and usability tests into actionable insights.',
-    icon: Users,
-    color: '#6366F1',
-    sources: 'Transcripts, Survey data, Session recordings',
-    outputs: 'VoC Report, Persona cards, Journey maps',
-    comingSoon: false,
-  },
-  {
-    id: 'analytics-review',
-    name: 'Analytics Review',
-    description: 'Combine quantitative data with qualitative signals to surface trends and anomalies.',
-    icon: BarChart3,
-    color: '#10B981',
-    sources: 'Dashboards, Metrics exports, A/B test results',
-    outputs: 'Trend report, Opportunity sizing, KPI summary',
-    comingSoon: true,
-  },
-  {
-    id: 'solution-discovery',
-    name: 'Solution Discovery',
-    description: 'Explore the problem and solution space across customer needs and market signals.',
-    icon: Lightbulb,
-    color: '#F59E0B',
-    sources: 'Customer feedback, Competitor analysis, Strategy docs',
-    outputs: 'Opportunity map, PRD draft, Business case',
-    comingSoon: true,
-  },
-  {
-    id: 'meeting-prep',
-    name: 'Meeting Prep',
-    description: 'Quickly gather context from multiple sources before a stakeholder meeting.',
-    icon: Briefcase,
-    color: '#8B5CF6',
-    sources: 'Docs, Slack threads, Previous meeting notes',
-    outputs: 'Briefing doc, Talking points, Decision log',
-    comingSoon: true,
-  },
-  {
-    id: 'competitive-analysis',
-    name: 'Competitive Analysis',
-    description: 'Aggregate and compare competitor data across positioning, features, and pricing.',
-    icon: TrendingUp,
-    color: '#EF4444',
-    sources: 'Competitor sites, G2 reviews, Sales battle cards',
-    outputs: 'Competitive matrix, Gap analysis, Win/loss report',
-    comingSoon: true,
-  },
-  {
-    id: 'customer-feedback',
-    name: 'Customer Feedback',
-    description: 'Consolidate feedback from support tickets, NPS, and CS conversations into themes.',
+    id: 'voc',
+    name: 'Voice of Customer',
+    description: 'Synthesize support tickets, surveys, and customer feedback into actionable VoC insights.',
     icon: MessageSquare,
-    color: '#06B6D4',
-    sources: 'Support tickets, NPS responses, CS notes',
-    outputs: 'Theme report, Priority matrix, Action items',
-    comingSoon: true,
+    color: '#6366F1',
+    sources: 'Support tickets, Surveys, CSAT/PSAT',
+    outputs: 'Monthly VoC Report',
   },
   {
-    id: 'sprint-planning',
-    name: 'Sprint Planning',
-    description: 'Combine product strategy, tech debt, and customer urgency to prioritize the next sprint.',
-    icon: ClipboardList,
+    id: 'okr-progress',
+    name: 'OKR Progress',
+    description: 'Track OKR progress by combining strategy docs, experiment results, and behavior metrics.',
+    icon: Target,
+    color: '#10B981',
+    sources: 'OKRs, Experiments, Metrics, Weekly updates',
+    outputs: 'Monthly OKR Report',
+  },
+  {
+    id: 'feature-prioritization',
+    name: 'Feature Prioritization',
+    description: 'Prioritize features by synthesizing customer interviews, strategy, and support signals.',
+    icon: Layers,
+    color: '#8B5CF6',
+    sources: 'Strategy docs, Interviews, Tickets, Recordings',
+    outputs: 'Synthesis Report, PRD',
+  },
+  {
+    id: 'feature-activation',
+    name: 'Feature Activation',
+    description: 'Analyze activation funnels by correlating analytics data with qualitative user feedback.',
+    icon: Activity,
+    color: '#F59E0B',
+    sources: 'Analytics, Interviews, Tickets, Feedback',
+    outputs: 'Activation Report',
+  },
+  {
+    id: 'brand-strategy',
+    name: 'Brand Strategy',
+    description: 'Map brand language, perceptions, and strategic tensions from internal and customer voices.',
+    icon: Palette,
     color: '#EC4899',
-    sources: 'Roadmap, Tech debt tracker, Customer requests',
-    outputs: 'Sprint backlog, Priority rationale, Risk assessment',
-    comingSoon: true,
-  },
-  {
-    id: 'launch-review',
-    name: 'Launch Review',
-    description: 'Post-launch synthesis of metrics, customer reactions, and internal retrospective data.',
-    icon: Megaphone,
-    color: '#F97316',
-    sources: 'Launch metrics, Customer feedback, Retro notes',
-    outputs: 'Launch report, Lessons learned, Follow-up plan',
-    comingSoon: true,
+    sources: 'Interviews, Support tickets, Slack threads',
+    outputs: 'Vocabulary Map, Strategy, Tensions',
   },
 ];
 
@@ -169,7 +130,6 @@ export function ProjectsList() {
             const pt = projectTypeMap[project.projectType];
             const TypeIcon = pt?.icon ?? FileText;
             const typeColor = pt?.color ?? '#6366F1';
-            const isComingSoon = pt ? pt.comingSoon : false;
 
             return (
               <motion.button
@@ -178,38 +138,22 @@ export function ProjectsList() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05, duration: 0.3 }}
                 onClick={() =>
-                  !isComingSoon &&
                   dispatch({ type: 'NAVIGATE_TO_PROJECT', payload: project.id })
                 }
-                disabled={isComingSoon}
-                className={`text-left p-5 rounded-xl border transition-all relative ${
-                  isComingSoon
-                    ? 'border-[var(--color-border)] bg-[var(--color-surface)] opacity-40 cursor-not-allowed'
-                    : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-elevated)] hover:border-[var(--color-border-bright)] group'
-                }`}
+                className="text-left p-5 rounded-xl border transition-all border-[var(--color-border)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-elevated)] hover:border-[var(--color-border-bright)] group"
               >
-                {isComingSoon && (
-                  <span className="absolute top-4 right-4 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--color-surface-elevated)] border border-[var(--color-border)] text-[10px] font-medium text-[var(--color-text-tertiary)]">
-                    <Lock className="w-2.5 h-2.5" />
-                    Coming Soon
-                  </span>
-                )}
                 <div className="flex items-start gap-3">
                   <div
                     className="p-2 rounded-lg shrink-0 mt-0.5"
                     style={{
-                      backgroundColor: isComingSoon ? 'rgba(107,114,128,0.1)' : `${typeColor}15`,
-                      color: isComingSoon ? '#6b7280' : typeColor,
+                      backgroundColor: `${typeColor}15`,
+                      color: typeColor,
                     }}
                   >
                     <TypeIcon className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className={`text-sm font-semibold transition-colors ${
-                      isComingSoon
-                        ? 'text-[var(--color-text-tertiary)]'
-                        : 'text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)]'
-                    }`}>
+                    <h3 className="text-sm font-semibold transition-colors text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)]">
                       {project.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-1.5">
@@ -217,8 +161,8 @@ export function ProjectsList() {
                         <span
                           className="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
                           style={{
-                            backgroundColor: isComingSoon ? 'rgba(107,114,128,0.1)' : `${typeColor}15`,
-                            color: isComingSoon ? '#6b7280' : typeColor,
+                            backgroundColor: `${typeColor}15`,
+                            color: typeColor,
                           }}
                         >
                           {pt.name}
@@ -260,114 +204,77 @@ export function ProjectsList() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* ── Step 1: Pick a type ── */}
-              {modalStep === 'pick-type' && (() => {
-                const featured = projectTypes.find((pt) => !pt.comingSoon)!;
-                const comingSoonTypes = projectTypes.filter((pt) => pt.comingSoon);
-                const FeaturedIcon = featured.icon;
-
-                return (
-                  <>
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] shrink-0">
-                      <div>
-                        <h3 className="text-base font-semibold text-[var(--color-text-primary)]">
-                          New Project
-                        </h3>
-                        <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                          Choose a project type to get started
-                        </p>
-                      </div>
-                      <button
-                        onClick={closeModal}
-                        className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
+              {modalStep === 'pick-type' && (
+                <>
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] shrink-0">
+                    <div>
+                      <h3 className="text-base font-semibold text-[var(--color-text-primary)]">
+                        New Project
+                      </h3>
+                      <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
+                        Choose a project type to get started
+                      </p>
                     </div>
+                    <button
+                      onClick={closeModal}
+                      className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
 
-                    <div className="overflow-y-auto px-6 py-5 space-y-6">
-                      {/* Featured: User Research */}
-                      <motion.button
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25 }}
-                        onClick={() => handlePickType(featured.id)}
-                        className="w-full text-left p-5 rounded-xl border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/5 hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)]/50 transition-all group"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div
-                            className="p-3 rounded-xl shrink-0"
-                            style={{ backgroundColor: `${featured.color}20`, color: featured.color }}
-                          >
-                            <FeaturedIcon className="w-6 h-6" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2.5">
-                              <h4 className="text-base font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)] transition-colors">
-                                {featured.name}
+                  <div className="overflow-y-auto px-6 py-5 space-y-2">
+                    {projectTypes.map((pt, i) => {
+                      const Icon = pt.icon;
+                      return (
+                        <motion.button
+                          key={pt.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.04, duration: 0.25 }}
+                          onClick={() => handlePickType(pt.id)}
+                          className="w-full text-left p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-surface-elevated)] hover:border-[var(--color-border-bright)] transition-all group"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              className="p-2.5 rounded-xl shrink-0"
+                              style={{ backgroundColor: `${pt.color}15`, color: pt.color }}
+                            >
+                              <Icon className="w-5 h-5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)] transition-colors">
+                                {pt.name}
                               </h4>
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-500/15 text-green-400">
-                                Available
-                              </span>
-                            </div>
-                            <p className="text-xs text-[var(--color-text-secondary)] mt-1.5 leading-relaxed">
-                              {featured.description}
-                            </p>
-                            <div className="flex gap-6 mt-3">
-                              <div>
-                                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
-                                  Sources
-                                </span>
-                                <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5">
-                                  {featured.sources}
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
-                                  Outputs
-                                </span>
-                                <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5">
-                                  {featured.outputs}
-                                </p>
+                              <p className="text-xs text-[var(--color-text-secondary)] mt-1 leading-relaxed">
+                                {pt.description}
+                              </p>
+                              <div className="flex gap-6 mt-2">
+                                <div>
+                                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
+                                    Sources
+                                  </span>
+                                  <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5">
+                                    {pt.sources}
+                                  </p>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
+                                    Outputs
+                                  </span>
+                                  <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5">
+                                    {pt.outputs}
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </motion.button>
-
-                      {/* Coming Soon section */}
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)] mb-3">
-                          Coming Soon
-                        </p>
-                        <div className="grid grid-cols-4 gap-2">
-                          {comingSoonTypes.map((pt, i) => {
-                            const Icon = pt.icon;
-                            return (
-                              <motion.div
-                                key={pt.id}
-                                initial={{ opacity: 0, y: 6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.05 + i * 0.03, duration: 0.2 }}
-                                className="flex flex-col items-center gap-2 p-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] opacity-45 cursor-default"
-                              >
-                                <div
-                                  className="p-2 rounded-lg"
-                                  style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280' }}
-                                >
-                                  <Icon className="w-4.5 h-4.5" />
-                                </div>
-                                <span className="text-[11px] font-medium text-[var(--color-text-tertiary)] text-center leading-tight">
-                                  {pt.name}
-                                </span>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                );
-              })()}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
 
               {/* ── Step 2: Name the project ── */}
               {modalStep === 'name-project' && chosenType && (

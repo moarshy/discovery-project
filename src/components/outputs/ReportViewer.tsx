@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Quote, Copy, Download, RefreshCw, Maximize2, Minimize2 } from 'lucide-react';
+import { ArrowLeft, Quote, Copy, Download, RefreshCw, Maximize2, Minimize2, Share2 } from 'lucide-react';
 import { useApp } from '../../store';
-import { sources } from '../../data/sources';
+import { useProjectData } from '../../hooks/useProjectData';
 import { CitationMarker } from './CitationMarker';
+import { ShareToSlackModal } from './ShareToSlackModal';
 import type { Report, Citation } from '../../types';
 
 interface ReportViewerProps {
@@ -14,12 +15,26 @@ const typeLabels: Record<string, string> = {
   report: 'Report',
   prd: 'PRD',
   'business-case': 'Business Case',
+  'vocabulary-map': 'Vocabulary Map',
+  'brand-strategy': 'Brand Strategy',
+  'tensions-report': 'Tensions Report',
+  'activation-report': 'Activation Report',
+  'okr-report': 'OKR Report',
+  'experiment-report': 'Experiment Report',
+  'progress-report': 'Progress Report',
 };
 
 const typeBadgeColors: Record<string, string> = {
   report: '#6366F1',
   prd: '#10B981',
   'business-case': '#F59E0B',
+  'vocabulary-map': '#06B6D4',
+  'brand-strategy': '#8B5CF6',
+  'tensions-report': '#F43F5E',
+  'activation-report': '#D946EF',
+  'okr-report': '#10B981',
+  'experiment-report': '#8B5CF6',
+  'progress-report': '#22C55E',
 };
 
 function formatDate(iso: string): string {
@@ -145,10 +160,14 @@ function renderInlineContent(text: string, citations: Citation[]) {
 
 export function ReportViewer({ report }: ReportViewerProps) {
   const { dispatch } = useApp();
+  const projectData = useProjectData();
   const [hoveredSection, setHoveredSection] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState(0);
+  const [showShareModal, setShowShareModal] = useState(false);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const sources = projectData?.sources ?? [];
 
   // Scroll spy via IntersectionObserver
   useEffect(() => {
@@ -203,6 +222,13 @@ export function ReportViewer({ report }: ReportViewerProps) {
             {report.title}
           </h3>
           <div className="flex items-center gap-1">
+            <button
+              onClick={() => setShowShareModal(true)}
+              title="Share to Slack"
+              className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
             <button className="p-1.5 rounded-md text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated)] transition-colors">
               <Copy className="w-3.5 h-3.5" />
             </button>
@@ -388,6 +414,11 @@ export function ReportViewer({ report }: ReportViewerProps) {
           </motion.div>
         ))}
       </div>
+
+      {/* Share to Slack modal */}
+      {showShareModal && (
+        <ShareToSlackModal report={report} onClose={() => setShowShareModal(false)} />
+      )}
     </div>
   );
 }

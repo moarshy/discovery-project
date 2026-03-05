@@ -1,19 +1,22 @@
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useApp } from '../../store';
-import { entities } from '../../data/entities';
-import { sources } from '../../data/sources';
-import { graphEdges } from '../../data/graph';
-import { getEntityTypeColor, getEntityTypeLabel } from '../../lib/graph-utils';
+import { useProjectData } from '../../hooks/useProjectData';
 
 export function EntityDetailPanel() {
   const { state, dispatch } = useApp();
+  const projectData = useProjectData();
+
+  if (!projectData) return null;
+
+  const { entities, sources, graphEdges, entityTypes } = projectData;
   const entity = entities.find((e) => e.id === state.selectedEntityId);
 
   if (!entity) return null;
 
-  const color = getEntityTypeColor(entity.type);
-  const typeLabel = getEntityTypeLabel(entity.type);
+  const et = entityTypes.find((t) => t.id === entity.type);
+  const color = et?.color ?? '#6b7280';
+  const typeLabel = et?.label ?? entity.type;
 
   // Find source objects for this entity
   const entitySources = entity.sourceRefs
@@ -123,7 +126,7 @@ export function EntityDetailPanel() {
                     <span
                       className="w-2 h-2 rounded-full shrink-0"
                       style={{
-                        backgroundColor: getEntityTypeColor(conn.entity.type),
+                        backgroundColor: entityTypes.find((t) => t.id === conn.entity.type)?.color ?? '#6b7280',
                       }}
                     />
                     <span className="text-[11px] text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] truncate">

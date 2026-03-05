@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Citation } from '../../types';
-import { sources } from '../../data/sources';
+import { useProjectData } from '../../hooks/useProjectData';
 
 interface CitationMarkerProps {
   index: number;
@@ -10,6 +10,8 @@ interface CitationMarkerProps {
 
 export function CitationMarker({ index, citation }: CitationMarkerProps) {
   const [hovered, setHovered] = useState(false);
+  const projectData = useProjectData();
+  const sources = projectData?.sources ?? [];
   const source = sources.find((s) => s.id === citation.sourceId);
 
   return (

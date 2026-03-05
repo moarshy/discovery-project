@@ -2,14 +2,13 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, PanelLeftOpen, Play, Loader2, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../store';
+import { useProjectData } from '../hooks/useProjectData';
+import { seededProjectIds } from '../data/project-registry';
 import { SourcePanel } from './sources/SourcePanel';
 import { ContextGraph } from './graph/ContextGraph';
 import { OutputPanel } from './outputs/OutputPanel';
 import { ReportViewer } from './outputs/ReportViewer';
-import { reports } from '../data/reports';
 import type { ProcessingStatus } from '../types';
-
-const SEEDED_PROJECT_ID = 'user-research-1';
 
 const SOURCE_MIN = 200;
 const SOURCE_MAX = 400;
@@ -29,7 +28,8 @@ const statusLabels: Record<ProcessingStatus, string> = {
 export function ProjectWorkspace() {
   const { state, dispatch } = useApp();
   const project = state.projects.find((p) => p.id === state.activeProjectId);
-  const isSeeded = state.activeProjectId === SEEDED_PROJECT_ID;
+  const projectData = useProjectData();
+  const isSeeded = state.activeProjectId ? seededProjectIds.has(state.activeProjectId) : false;
   const { processingStatus } = state;
 
   // Phased data gating
@@ -38,8 +38,8 @@ export function ProjectWorkspace() {
   const hasOutputs = processingStatus === 'done';
 
   const activeReport =
-    hasOutputs && state.activeOutputId
-      ? reports.find((r) => r.id === state.activeOutputId)
+    hasOutputs && state.activeOutputId && projectData
+      ? projectData.reports.find((r) => r.id === state.activeOutputId)
       : null;
 
   // Timer orchestration for processing phases

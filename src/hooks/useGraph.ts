@@ -9,7 +9,6 @@ import {
   type SimulationLinkDatum,
 } from 'd3-force';
 import type { GraphNode, GraphEdge, EdgeType } from '../types';
-import { entities } from '../data/entities';
 
 interface SimNode extends SimulationNodeDatum {
   id: string;
@@ -84,6 +83,15 @@ export function useGraph({ nodes, edges, width, height }: UseGraphOptions) {
     nodesRef.current = simNodes;
     linksRef.current = simLinks;
 
+    // Compute mention counts per node for collide radius
+    const mentionCounts = new Map<string, number>();
+    for (const link of simLinks) {
+      if (link.relationship === 'mentions') {
+        const src = typeof link.source === 'object' ? (link.source as SimNode).id : String(link.source);
+        mentionCounts.set(src, (mentionCounts.get(src) ?? 0) + 1);
+      }
+    }
+
     const simulation = forceSimulation<SimNode>(simNodes)
       .force(
         'link',
@@ -96,8 +104,7 @@ export function useGraph({ nodes, edges, width, height }: UseGraphOptions) {
       .force('center', forceCenter(width / 2, height / 2))
       .force('collide', forceCollide<SimNode>().radius((d) => {
         if (d.nodeType === 'source') return 35;
-        const ent = entities.find((e) => e.id === d.id);
-        const refCount = ent ? ent.sourceRefs.length : 1;
+        const refCount = mentionCounts.get(d.id) ?? 1;
         return 35 * (1 + Math.min(refCount - 1, 3) * 0.15);
       }))
       .alphaDecay(0.02);

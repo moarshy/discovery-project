@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Plus, Upload, PanelLeftClose } from 'lucide-react';
 import { useApp } from '../../store';
-import { sourceCategories } from '../../data/sources';
-import { entities } from '../../data/entities';
+import { useProjectData } from '../../hooks/useProjectData';
 import { SourceItem } from './SourceItem';
 import { AddSourceModal } from './AddSourceModal';
 import { SkillPopover } from './SkillPopover';
@@ -15,7 +14,11 @@ interface SourcePanelProps {
 
 export function SourcePanel({ hasData, onCollapse }: SourcePanelProps) {
   const { state, dispatch } = useApp();
+  const projectData = useProjectData();
   const [autoSearch, setAutoSearch] = useState(false);
+
+  const sourceCategories = projectData?.sourceCategories ?? [];
+  const entities = projectData?.entities ?? [];
 
   // Find sources highlighted by a selected entity
   const highlightedSourceIds = new Set<string>();
