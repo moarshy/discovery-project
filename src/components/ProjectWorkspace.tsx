@@ -1,12 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, PanelLeftOpen } from 'lucide-react';
+import { ArrowLeft, PanelLeftOpen, Play, Loader2, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../store';
 import { SourcePanel } from './sources/SourcePanel';
 import { ContextGraph } from './graph/ContextGraph';
 import { OutputPanel } from './outputs/OutputPanel';
 import { ReportViewer } from './outputs/ReportViewer';
 import { reports } from '../data/reports';
+import type { ProcessingStatus } from '../types';
 
 const SEEDED_PROJECT_ID = 'user-research-1';
 
@@ -17,14 +18,53 @@ const SOURCE_COLLAPSED = 0;
 const GRAPH_MIN = 300;
 const OUTPUT_MIN = 260;
 
+const statusLabels: Record<ProcessingStatus, string> = {
+  idle: '',
+  extracting: 'Extracting entities...',
+  graphing: 'Building graph...',
+  generating: 'Generating reports...',
+  done: 'Complete',
+};
+
 export function ProjectWorkspace() {
   const { state, dispatch } = useApp();
   const project = state.projects.find((p) => p.id === state.activeProjectId);
-  const hasData = state.activeProjectId === SEEDED_PROJECT_ID;
+  const isSeeded = state.activeProjectId === SEEDED_PROJECT_ID;
+  const { processingStatus } = state;
+
+  // Phased data gating
+  const hasEntities = ['graphing', 'generating', 'done'].includes(processingStatus);
+  const hasGraph = ['generating', 'done'].includes(processingStatus);
+  const hasOutputs = processingStatus === 'done';
+
   const activeReport =
-    hasData && state.activeOutputId
+    hasOutputs && state.activeOutputId
       ? reports.find((r) => r.id === state.activeOutputId)
       : null;
+
+  // Timer orchestration for processing phases
+  useEffect(() => {
+    if (processingStatus === 'idle' || processingStatus === 'done') return;
+
+    const nextPhase: Record<string, ProcessingStatus> = {
+      extracting: 'graphing',
+      graphing: 'generating',
+      generating: 'done',
+    };
+
+    const next = nextPhase[processingStatus];
+    if (!next) return;
+
+    const timer = setTimeout(() => {
+      // Auto-switch to graph view when graphing starts
+      if (processingStatus === 'extracting') {
+        dispatch({ type: 'SET_GRAPH_VIEW', payload: 'graph' });
+      }
+      dispatch({ type: 'SET_PROCESSING_STATUS', payload: next });
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [processingStatus, dispatch]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [sourceWidth, setSourceWidth] = useState(SOURCE_DEFAULT);
@@ -93,6 +133,8 @@ export function ProjectWorkspace() {
 
   const COLLAPSED_RAIL = 40;
   const effectiveSourceWidth = sourceCollapsed ? COLLAPSED_RAIL : sourceWidth;
+  const isProcessing = !['idle', 'done'].includes(processingStatus);
+  const canRun = isSeeded && processingStatus === 'idle';
 
   return (
     <div className="h-full flex flex-col">
@@ -107,6 +149,52 @@ export function ProjectWorkspace() {
         <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">
           {project.name}
         </h2>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Run button / status pill */}
+        <AnimatePresence mode="wait">
+          {canRun && (
+            <motion.button
+              key="run-btn"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={() => dispatch({ type: 'START_PROCESSING' })}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-accent)] text-white text-xs font-medium hover:brightness-110 transition-all"
+            >
+              <Play className="w-3.5 h-3.5" />
+              Run Analysis
+            </motion.button>
+          )}
+
+          {isProcessing && (
+            <motion.div
+              key="status-pill"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 text-xs font-medium text-[var(--color-accent)]"
+            >
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              {statusLabels[processingStatus]}
+            </motion.div>
+          )}
+
+          {processingStatus === 'done' && (
+            <motion.div
+              key="done-pill"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-xs font-medium text-green-400"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Complete
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Three-panel layout */}
@@ -135,7 +223,7 @@ export function ProjectWorkspace() {
               className="shrink-0 overflow-hidden border-r border-[var(--color-border)]"
             >
               <div style={{ width: sourceWidth }} className="h-full">
-                <SourcePanel hasData={hasData} onCollapse={() => setSourceCollapsed(true)} />
+                <SourcePanel hasData={isSeeded} onCollapse={() => setSourceCollapsed(true)} />
               </div>
             </motion.div>
           )}
@@ -157,7 +245,7 @@ export function ProjectWorkspace() {
           className="shrink-0 overflow-hidden border-r border-[var(--color-border)]"
           style={{ width: `calc((100% - ${effectiveSourceWidth}px) * ${graphRatio})` }}
         >
-          <ContextGraph hasData={hasData} />
+          <ContextGraph hasEntities={hasEntities} processingStatus={processingStatus} />
         </div>
 
         {/* Resize handle: graph ↔ output */}
@@ -174,7 +262,7 @@ export function ProjectWorkspace() {
           {activeReport ? (
             <ReportViewer report={activeReport} />
           ) : (
-            <OutputPanel hasData={hasData} />
+            <OutputPanel hasOutputs={hasOutputs} processingStatus={processingStatus} />
           )}
         </div>
       </div>

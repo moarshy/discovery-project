@@ -17,6 +17,7 @@ export const initialState: AppState = {
   hoveredNodeId: null,
   focusNodeId: null,
   graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
+  processingStatus: 'idle',
 };
 
 function formatDate(d: Date): string {
@@ -42,6 +43,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedSourceId: null,
         selectedEntityId: null,
         activeOutputId: null,
+        processingStatus: 'idle',
       };
     case 'NAVIGATE_TO_INTEGRATIONS':
       return {
@@ -177,6 +179,16 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         focusNodeId: null,
+      };
+    case 'START_PROCESSING':
+      return {
+        ...state,
+        processingStatus: 'extracting',
+      };
+    case 'SET_PROCESSING_STATUS':
+      return {
+        ...state,
+        processingStatus: action.payload,
       };
     default:
       return state;

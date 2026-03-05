@@ -104,6 +104,9 @@ export interface Report {
   generatedAt: string;
 }
 
+// Processing pipeline
+export type ProcessingStatus = 'idle' | 'extracting' | 'graphing' | 'generating' | 'done';
+
 // App state
 export type Screen = 'projects' | 'workspace' | 'integrations';
 export type GraphViewMode = 'table' | 'graph';
@@ -128,6 +131,7 @@ export interface AppState {
   hoveredNodeId: string | null;
   focusNodeId: string | null;
   graphFilters: GraphFilterState;
+  processingStatus: ProcessingStatus;
 }
 
 export type AppAction =
@@ -150,4 +154,6 @@ export type AppAction =
   | { type: 'SET_FOCUS_NODE'; payload: string | null }
   | { type: 'TOGGLE_ENTITY_TYPE_FILTER'; payload: EntityTypeName }
   | { type: 'TOGGLE_EDGE_TYPE_FILTER'; payload: EdgeType }
-  | { type: 'CLEAR_FOCUS_MODE' };
+  | { type: 'CLEAR_FOCUS_MODE' }
+  | { type: 'START_PROCESSING' }
+  | { type: 'SET_PROCESSING_STATUS'; payload: ProcessingStatus };
