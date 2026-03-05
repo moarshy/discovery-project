@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-This starts the Vite dev server. Open the URL shown in the terminal (usually `http://localhost:5173`).
+This starts the Vite dev server and launches the Electron app with hot reload.
 
 ## Build
 
