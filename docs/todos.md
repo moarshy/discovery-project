@@ -97,7 +97,7 @@ Extracted from the sync between Richard, Thomas, and Arshath. Ordered by impleme
 
 > Thomas suggested hinting at cross-project shared memory during demos without building the full feature. Key talking point for differentiation.
 
-- [ ] **27. Company Memory sidebar stub** — Add a "Company Memory" icon/button in the left sidebar (below Skills, above Settings). Clicking it shows a placeholder page with a title ("Company Memory"), a brief description ("Shared knowledge graph across all projects"), and maybe a few mock stats (e.g., "14 entities · 3 projects contributing · Last synced 2h ago"). Purpose: plant the seed during demos without building real functionality. *(All demos — demo narrative)*
+- [x] **27. Company Memory sidebar stub** — Add a "Company Memory" icon/button in the left sidebar (below Skills, above Settings). Clicking it shows a placeholder page with a title ("Company Memory"), a brief description ("Shared knowledge graph across all projects"), and maybe a few mock stats (e.g., "14 entities · 3 projects contributing · Last synced 2h ago"). Purpose: plant the seed during demos without building real functionality. *(All demos — demo narrative)*
 
 ---
 

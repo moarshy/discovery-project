@@ -160,7 +160,7 @@ export type SourceSkillAssignments = Record<string, SkillId[]>;
 
 export type SourceWeights = Record<string, number>;  // sourceId → weight (0..2, default 1)
 
-export type Screen = 'projects' | 'workspace' | 'integrations' | 'skills' | 'history';
+export type Screen = 'projects' | 'workspace' | 'integrations' | 'skills' | 'history' | 'memory';
 export type GraphViewMode = 'table' | 'graph';
 export type AddSourceStep = 'closed' | 'pick-integration' | 'browse-items';
 
@@ -195,6 +195,8 @@ export interface AppState {
   skillPopoverSourceId: string | null;
   editingSkillId: SkillId | null;
   sourceWeights: SourceWeights;
+  showOutputTemplateModal: boolean;
+  addedOutputTemplates: Record<string, string[]>; // projectId → added template IDs
 }
 
 export type AppAction =
@@ -242,4 +244,9 @@ export type AppAction =
   | { type: 'UPDATE_SKILL'; payload: { id: SkillId; name: string; description: string; instructions: string } }
   | { type: 'SET_SOURCE_WEIGHT'; payload: { sourceId: string; weight: number } }
   | { type: 'NAVIGATE_TO_HISTORY' }
-  | { type: 'VIEW_RUN_OUTPUT'; payload: { projectId: string; reportId: string } };
+  | { type: 'VIEW_RUN_OUTPUT'; payload: { projectId: string; reportId: string } }
+  | { type: 'NAVIGATE_TO_MEMORY' }
+  | { type: 'OPEN_OUTPUT_TEMPLATE_MODAL' }
+  | { type: 'CLOSE_OUTPUT_TEMPLATE_MODAL' }
+  | { type: 'ADD_OUTPUT_TEMPLATE'; payload: { projectId: string; templateId: string } }
+  | { type: 'REMOVE_OUTPUT_TEMPLATE'; payload: { projectId: string; templateId: string } };

@@ -1,12 +1,42 @@
+import { type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, Puzzle, Zap, Activity, Settings, Sun, Moon } from 'lucide-react';
+import { Layers, Puzzle, Zap, Activity, Brain, Settings, Sun, Moon } from 'lucide-react';
 import { useApp } from '../store';
 import { ProjectsList } from './ProjectsList';
 import { ProjectWorkspace } from './ProjectWorkspace';
 import { IntegrationsPage } from './IntegrationsPage';
 import { SkillsPage } from './SkillsPage';
 import { RunHistoryPage } from './RunHistoryPage';
+import { CompanyMemoryPage } from './CompanyMemoryPage';
 import type { Screen } from '../types';
+
+function SidebarButton({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative group p-2 rounded-lg transition-colors ${
+        active
+          ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+          : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
+      }`}
+    >
+      {icon}
+      <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] border border-[var(--color-border)] shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        {label}
+      </span>
+    </button>
+  );
+}
 
 export function AppShell() {
   const { state, dispatch } = useApp();
@@ -16,6 +46,7 @@ export function AppShell() {
     else if (screen === 'integrations') dispatch({ type: 'NAVIGATE_TO_INTEGRATIONS' });
     else if (screen === 'skills') dispatch({ type: 'NAVIGATE_TO_SKILLS' });
     else if (screen === 'history') dispatch({ type: 'NAVIGATE_TO_HISTORY' });
+    else if (screen === 'memory') dispatch({ type: 'NAVIGATE_TO_MEMORY' });
   }
 
   return (
@@ -38,64 +69,49 @@ export function AppShell() {
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <div className="w-12 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col items-center py-3 gap-3">
-          <button
+          <SidebarButton
+            icon={<Layers className="w-5 h-5" />}
+            label="Projects"
+            active={state.screen === 'projects' || state.screen === 'workspace'}
             onClick={() => handleNav('projects')}
-            className={`p-2 rounded-lg transition-colors ${
-              state.screen === 'projects' || state.screen === 'workspace'
-                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
-                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
-            }`}
-            title="Projects"
-          >
-            <Layers className="w-5 h-5" />
-          </button>
-          <button
+          />
+          <SidebarButton
+            icon={<Puzzle className="w-5 h-5" />}
+            label="Integrations"
+            active={state.screen === 'integrations'}
             onClick={() => handleNav('integrations')}
-            className={`p-2 rounded-lg transition-colors ${
-              state.screen === 'integrations'
-                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
-                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
-            }`}
-            title="Integrations"
-          >
-            <Puzzle className="w-5 h-5" />
-          </button>
-          <button
+          />
+          <SidebarButton
+            icon={<Zap className="w-5 h-5" />}
+            label="Skills"
+            active={state.screen === 'skills'}
             onClick={() => handleNav('skills')}
-            className={`p-2 rounded-lg transition-colors ${
-              state.screen === 'skills'
-                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
-                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
-            }`}
-            title="Skills"
-          >
-            <Zap className="w-5 h-5" />
-          </button>
-          <button
+          />
+          <SidebarButton
+            icon={<Activity className="w-5 h-5" />}
+            label="Run History"
+            active={state.screen === 'history'}
             onClick={() => handleNav('history')}
-            className={`p-2 rounded-lg transition-colors ${
-              state.screen === 'history'
-                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
-                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
-            }`}
-            title="Run History"
-          >
-            <Activity className="w-5 h-5" />
-          </button>
+          />
+          <SidebarButton
+            icon={<Brain className="w-5 h-5" />}
+            label="Company Memory"
+            active={state.screen === 'memory'}
+            onClick={() => handleNav('memory')}
+          />
           <div className="flex-1" />
-          <button
+          <SidebarButton
+            icon={state.theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            label={state.theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            active={false}
             onClick={() => dispatch({ type: 'TOGGLE_THEME' })}
-            className="p-2 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
-            title={state.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {state.theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
-          <button
-            className="p-2 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
-            title="Settings"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+          />
+          <SidebarButton
+            icon={<Settings className="w-5 h-5" />}
+            label="Settings"
+            active={false}
+            onClick={() => {}}
+          />
         </div>
 
         {/* Main content */}
@@ -159,6 +175,18 @@ export function AppShell() {
                 className="h-full"
               >
                 <RunHistoryPage />
+              </motion.div>
+            )}
+            {state.screen === 'memory' && (
+              <motion.div
+                key="memory"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+                className="h-full"
+              >
+                <CompanyMemoryPage />
               </motion.div>
             )}
           </AnimatePresence>

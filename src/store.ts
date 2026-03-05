@@ -30,6 +30,8 @@ export const initialState: AppState = {
   skillPopoverSourceId: null,
   editingSkillId: null,
   sourceWeights: {},
+  showOutputTemplateModal: false,
+  addedOutputTemplates: {},
 };
 
 function formatDate(d: Date): string {
@@ -372,6 +374,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         skillPopoverSourceId: null,
         editingSkillId: null,
       };
+    case 'NAVIGATE_TO_MEMORY':
+      return {
+        ...state,
+        screen: 'memory',
+        activeProjectId: null,
+        selectedSourceId: null,
+        selectedEntityId: null,
+        activeOutputId: null,
+      };
     case 'VIEW_RUN_OUTPUT':
       return {
         ...state,
@@ -387,6 +398,39 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         outputGenStatuses: { [action.payload.reportId]: 'done' },
         scheduleModalOutputId: null,
       };
+    case 'OPEN_OUTPUT_TEMPLATE_MODAL':
+      return {
+        ...state,
+        showOutputTemplateModal: true,
+      };
+    case 'CLOSE_OUTPUT_TEMPLATE_MODAL':
+      return {
+        ...state,
+        showOutputTemplateModal: false,
+      };
+    case 'ADD_OUTPUT_TEMPLATE': {
+      const { projectId, templateId } = action.payload;
+      const current = state.addedOutputTemplates[projectId] ?? [];
+      if (current.includes(templateId)) return state;
+      return {
+        ...state,
+        addedOutputTemplates: {
+          ...state.addedOutputTemplates,
+          [projectId]: [...current, templateId],
+        },
+      };
+    }
+    case 'REMOVE_OUTPUT_TEMPLATE': {
+      const { projectId, templateId } = action.payload;
+      const current = state.addedOutputTemplates[projectId] ?? [];
+      return {
+        ...state,
+        addedOutputTemplates: {
+          ...state.addedOutputTemplates,
+          [projectId]: current.filter((id) => id !== templateId),
+        },
+      };
+    }
     default:
       return state;
   }

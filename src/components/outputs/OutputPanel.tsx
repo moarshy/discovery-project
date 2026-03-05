@@ -1,28 +1,17 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  FileText, ClipboardList, TrendingUp, Plus, CheckCircle2,
-  Map, BookOpen, AlertTriangle, BarChart3, Target, FlaskConical,
-  ListChecks, Sparkles, Loader2, Calendar, Lock,
+  FileText, Plus, CheckCircle2,
+  Sparkles, Loader2, Calendar, Lock,
 } from 'lucide-react';
 import { useApp } from '../../store';
 import { useProjectData } from '../../hooks/useProjectData';
 import { OutputCardMenu } from './OutputCardMenu';
 import { VersionHistoryButton } from './VersionHistoryButton';
 import { formatSchedule } from '../../lib/schedule-utils';
+import { outputIcons } from './output-icons';
+import { outputTemplates, stubReportFromTemplate } from '../../data/output-templates';
 import type { OutputGenStatus } from '../../types';
-
-const outputIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  report: FileText,
-  prd: ClipboardList,
-  'business-case': TrendingUp,
-  'vocabulary-map': Map,
-  'brand-strategy': BookOpen,
-  'tensions-report': AlertTriangle,
-  'activation-report': BarChart3,
-  'okr-report': Target,
-  'experiment-report': FlaskConical,
-  'progress-report': ListChecks,
-};
 
 interface OutputPanelProps {
   graphSynced: boolean;
@@ -31,8 +20,18 @@ interface OutputPanelProps {
 export function OutputPanel({ graphSynced }: OutputPanelProps) {
   const { state, dispatch } = useApp();
   const projectData = useProjectData();
-  const reports = projectData?.reports ?? [];
-  const { outputGenStatuses, outputSchedules } = state;
+  const hardcodedReports = projectData?.reports ?? [];
+  const { outputGenStatuses, outputSchedules, activeProjectId, addedOutputTemplates } = state;
+
+  // Merge hardcoded reports with stub reports from user-added templates
+  const addedIds = activeProjectId ? (addedOutputTemplates[activeProjectId] ?? []) : [];
+  const reports = useMemo(() => {
+    const stubs = addedIds
+      .map((tid) => outputTemplates.find((t) => t.id === tid))
+      .filter(Boolean)
+      .map((t) => stubReportFromTemplate(t!));
+    return [...hardcodedReports, ...stubs];
+  }, [hardcodedReports, addedIds]);
 
   const getStatus = (id: string): OutputGenStatus => outputGenStatuses[id] ?? 'idle';
 
@@ -62,7 +61,10 @@ export function OutputPanel({ graphSynced }: OutputPanelProps) {
               Generate All
             </button>
           )}
-          <button className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-dashed border-[var(--color-border-bright)] text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 transition-colors">
+          <button
+            onClick={() => dispatch({ type: 'OPEN_OUTPUT_TEMPLATE_MODAL' })}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-dashed border-[var(--color-border-bright)] text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 transition-colors"
+          >
             <Plus className="w-3 h-3" />
             Add Output Template
           </button>

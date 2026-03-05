@@ -9,6 +9,7 @@ import { ContextGraph } from './graph/ContextGraph';
 import { OutputPanel } from './outputs/OutputPanel';
 import { ReportViewer } from './outputs/ReportViewer';
 import { ScheduleModal } from './outputs/ScheduleModal';
+import { OutputTemplateModal } from './outputs/OutputTemplateModal';
 import type { GraphSyncStatus } from '../types';
 
 const SOURCE_MIN = 200;
@@ -244,6 +245,9 @@ export function ProjectWorkspace() {
           onClose={() => dispatch({ type: 'CLOSE_SCHEDULE_MODAL' })}
         />
       )}
+
+      {/* Output template gallery modal */}
+      {state.showOutputTemplateModal && <OutputTemplateModal />}
     </div>
   );
 }
