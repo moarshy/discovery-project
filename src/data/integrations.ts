@@ -46,6 +46,42 @@ export const integrations: Integration[] = [
     connected: true,
     authType: 'local',
   },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    description: 'Support conversations and customer messages',
+    icon: '',
+    color: '#286EFA',
+    connected: false,
+    authType: 'oauth',
+  },
+  {
+    id: 'airtable',
+    name: 'Airtable',
+    description: 'Structured records, learning logs, and databases',
+    icon: '',
+    color: '#18BFFF',
+    connected: false,
+    authType: 'api-key',
+  },
+  {
+    id: 'mixpanel',
+    name: 'Mixpanel',
+    description: 'Product analytics, funnels, and user behavior data',
+    icon: '',
+    color: '#7856FF',
+    connected: false,
+    authType: 'api-key',
+  },
+  {
+    id: 'discord',
+    name: 'Discord',
+    description: 'Server channels and community discussions',
+    icon: '',
+    color: '#5865F2',
+    connected: false,
+    authType: 'oauth',
+  },
 ];
 
 /** Mock "configured state" shown on the integrations page */
@@ -55,6 +91,10 @@ export const integrationMeta: Record<string, string> = {
   jira: '2 projects · 23 issues tracked',
   slack: '',
   'local-files': 'Always available',
+  intercom: '',
+  airtable: '',
+  mixpanel: '',
+  discord: '',
 };
 
 export const integrationItems: Record<string, IntegrationItem[]> = {
@@ -87,5 +127,32 @@ export const integrationItems: Record<string, IntegrationItem[]> = {
   ],
   'local-files': [
     { id: 'local-1', integrationId: 'local-files', name: 'Upload .md, .txt, or .pdf files', type: 'Upload', icon: '', description: 'Drag and drop or click to browse' },
+  ],
+  intercom: [
+    { id: 'intercom-1', integrationId: 'intercom', name: 'Workspace export not working', type: 'Conversation', icon: '', description: "Customer can't export workspace to PDF" },
+    { id: 'intercom-2', integrationId: 'intercom', name: 'Billing question — team upgrade', type: 'Conversation', icon: '', description: 'Asking about per-seat pricing' },
+    { id: 'intercom-3', integrationId: 'intercom', name: 'Feature request: API webhooks', type: 'Conversation', icon: '', description: 'Wants webhook for new record events' },
+    { id: 'intercom-4', integrationId: 'intercom', name: 'Slow load times on dashboard', type: 'Conversation', icon: '', description: 'Performance degradation report' },
+    { id: 'intercom-5', integrationId: 'intercom', name: 'Onboarding confusion — roles', type: 'Conversation', icon: '', description: 'New user confused by role permissions' },
+  ],
+  airtable: [
+    { id: 'airtable-1', integrationId: 'airtable', name: 'Q1 Learnings Log', type: 'Table', icon: '', description: 'Team retrospective findings' },
+    { id: 'airtable-2', integrationId: 'airtable', name: 'Customer Feedback Tracker', type: 'Table', icon: '', description: 'Organized feedback with tags and status' },
+    { id: 'airtable-3', integrationId: 'airtable', name: 'OKR Progress — Engineering', type: 'Table', icon: '', description: 'Key results with completion percentages' },
+    { id: 'airtable-4', integrationId: 'airtable', name: 'Experiment Results 2026', type: 'Table', icon: '', description: 'A/B test outcomes and learnings' },
+    { id: 'airtable-5', integrationId: 'airtable', name: 'Product Roadmap Items', type: 'Table', icon: '', description: 'Prioritized feature backlog' },
+  ],
+  mixpanel: [
+    { id: 'mixpanel-1', integrationId: 'mixpanel', name: 'Activation Funnel (30d)', type: 'Report', icon: '', description: 'Sign-up → first value event conversion' },
+    { id: 'mixpanel-2', integrationId: 'mixpanel', name: 'Feature Usage Heatmap', type: 'Report', icon: '', description: 'Weekly active usage by feature' },
+    { id: 'mixpanel-3', integrationId: 'mixpanel', name: 'Retention Cohorts — Q1', type: 'Report', icon: '', description: 'Weekly retention by signup cohort' },
+    { id: 'mixpanel-4', integrationId: 'mixpanel', name: 'Drop-off Analysis: Onboarding', type: 'Report', icon: '', description: 'Step-by-step funnel abandonment' },
+    { id: 'mixpanel-5', integrationId: 'mixpanel', name: 'Power Users Segment', type: 'Report', icon: '', description: 'Behavioral traits of top 10% users' },
+  ],
+  discord: [
+    { id: 'discord-1', integrationId: 'discord', name: '#general — brand perception thread', type: 'Thread', icon: '', description: 'Community discussing rebrand rumors' },
+    { id: 'discord-2', integrationId: 'discord', name: '#feedback — feature requests', type: 'Channel', icon: '', description: 'User-submitted feature ideas' },
+    { id: 'discord-3', integrationId: 'discord', name: '#support — common issues', type: 'Channel', icon: '', description: 'Recurring support questions' },
+    { id: 'discord-4', integrationId: 'discord', name: '#announcements reactions', type: 'Thread', icon: '', description: 'Community response to product update' },
   ],
 };

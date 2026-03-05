@@ -310,11 +310,11 @@ export function GraphView() {
                   {isSelected && (
                     <circle r={18} fill="none" stroke="var(--color-accent)" strokeWidth={2} opacity={0.6} />
                   )}
-                  <circle r={14} fill="#374151" fillOpacity={0.5} stroke="#6b7280" strokeWidth={1} />
+                  <circle r={14} fill="var(--color-graph-node-fill)" fillOpacity={0.5} stroke="var(--color-graph-node-stroke)" strokeWidth={1} />
                   <text
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fill="#d1d5db"
+                    fill="var(--color-graph-node-text)"
                     fontSize={7}
                     fontWeight={500}
                     style={{ pointerEvents: 'none', userSelect: 'none' }}

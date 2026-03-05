@@ -60,7 +60,7 @@ export function OutputPanel({ hasOutputs, processingStatus }: OutputPanelProps) 
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-white transition-colors">
+                        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)] transition-colors">
                           {report.title}
                         </h4>
                         <span className="flex items-center gap-1 text-[10px] font-medium text-green-400">

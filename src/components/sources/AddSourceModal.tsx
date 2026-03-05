@@ -19,7 +19,7 @@ function IntegrationRow({ integration, index }: { integration: Integration; inde
     >
       <BrandMark id={integration.id} size="md" />
       <div className="flex-1 min-w-0">
-        <span className="text-sm font-medium text-[var(--color-text-primary)] group-hover:text-white transition-colors">
+        <span className="text-sm font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)] transition-colors">
           {integration.name}
         </span>
         <p className="text-[11px] text-[var(--color-text-tertiary)] truncate">

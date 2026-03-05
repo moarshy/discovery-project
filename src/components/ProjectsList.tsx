@@ -208,7 +208,7 @@ export function ProjectsList() {
                     <h3 className={`text-sm font-semibold transition-colors ${
                       isComingSoon
                         ? 'text-[var(--color-text-tertiary)]'
-                        : 'text-[var(--color-text-primary)] group-hover:text-white'
+                        : 'text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)]'
                     }`}>
                       {project.name}
                     </h3>
@@ -302,7 +302,7 @@ export function ProjectsList() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2.5">
-                              <h4 className="text-base font-semibold text-[var(--color-text-primary)] group-hover:text-white transition-colors">
+                              <h4 className="text-base font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-text-primary)] transition-colors">
                                 {featured.name}
                               </h4>
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-500/15 text-green-400">

@@ -12,6 +12,25 @@
   --color-text-tertiary: #55556A;
   --color-accent: #6366F1;
   --color-accent-hover: #4F46E5;
+  --color-graph-node-fill: #374151;
+  --color-graph-node-stroke: #6b7280;
+  --color-graph-node-text: #d1d5db;
+}
+
+[data-theme="light"] {
+  --color-bg: #F5F6F8;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F0F1F4;
+  --color-border: #E2E4E9;
+  --color-border-bright: #CBD0D8;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-accent: #6366F1;
+  --color-accent-hover: #4F46E5;
+  --color-graph-node-fill: #E5E7EB;
+  --color-graph-node-stroke: #9CA3AF;
+  --color-graph-node-text: #374151;
 }
 
 html, body, #root {

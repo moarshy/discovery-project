@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer, type Dispatch } from 'react';
 import type { AppState, AppAction } from './types';
 import { defaultProjects } from './data/projects';
 import { integrations as defaultIntegrations } from './data/integrations';
+import { defaultSkills, defaultSourceSkillAssignments, mockImportSkill } from './data/skills';
 
 export const initialState: AppState = {
   screen: 'projects',
@@ -18,6 +19,13 @@ export const initialState: AppState = {
   focusNodeId: null,
   graphFilters: { hiddenEntityTypes: new Set(), hiddenEdgeTypes: new Set() },
   processingStatus: 'idle',
+  theme: 'dark',
+  skills: defaultSkills,
+  sourceSkillAssignments: { ...defaultSourceSkillAssignments },
+  showImportSkillModal: false,
+  skillPopoverSourceId: null,
+  editingSkillId: null,
+  sourceWeights: {},
 };
 
 function formatDate(d: Date): string {
@@ -44,6 +52,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedEntityId: null,
         activeOutputId: null,
         processingStatus: 'idle',
+        skillPopoverSourceId: null,
       };
     case 'NAVIGATE_TO_INTEGRATIONS':
       return {
@@ -79,6 +88,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         selectedSourceId: action.payload,
         selectedEntityId: null,
+        skillPopoverSourceId: action.payload === null ? null : state.skillPopoverSourceId,
       };
     case 'SELECT_ENTITY':
       return {
@@ -189,6 +199,96 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         processingStatus: action.payload,
+      };
+    case 'TOGGLE_THEME':
+      return {
+        ...state,
+        theme: state.theme === 'dark' ? 'light' : 'dark',
+      };
+    case 'NAVIGATE_TO_SKILLS':
+      return {
+        ...state,
+        screen: 'skills',
+        activeProjectId: null,
+        selectedSourceId: null,
+        selectedEntityId: null,
+        activeOutputId: null,
+        skillPopoverSourceId: null,
+        editingSkillId: null,
+      };
+    case 'TOGGLE_SKILL':
+      return {
+        ...state,
+        skills: state.skills.map((s) =>
+          s.id === action.payload ? { ...s, enabled: !s.enabled } : s
+        ),
+      };
+    case 'IMPORT_SKILL':
+      return {
+        ...state,
+        skills: [...state.skills, mockImportSkill(action.payload.url)],
+        showImportSkillModal: false,
+      };
+    case 'OPEN_IMPORT_SKILL_MODAL':
+      return {
+        ...state,
+        showImportSkillModal: true,
+      };
+    case 'CLOSE_IMPORT_SKILL_MODAL':
+      return {
+        ...state,
+        showImportSkillModal: false,
+      };
+    case 'OPEN_SKILL_POPOVER':
+      return {
+        ...state,
+        skillPopoverSourceId: action.payload,
+      };
+    case 'CLOSE_SKILL_POPOVER':
+      return {
+        ...state,
+        skillPopoverSourceId: null,
+      };
+    case 'TOGGLE_SOURCE_SKILL': {
+      const { sourceId, skillId } = action.payload;
+      const current = state.sourceSkillAssignments[sourceId] || [];
+      const next = current.includes(skillId)
+        ? current.filter((id) => id !== skillId)
+        : [...current, skillId];
+      return {
+        ...state,
+        sourceSkillAssignments: {
+          ...state.sourceSkillAssignments,
+          [sourceId]: next,
+        },
+      };
+    }
+    case 'SELECT_SKILL':
+      return {
+        ...state,
+        editingSkillId: action.payload,
+      };
+    case 'DESELECT_SKILL':
+      return {
+        ...state,
+        editingSkillId: null,
+      };
+    case 'UPDATE_SKILL':
+      return {
+        ...state,
+        skills: state.skills.map((s) =>
+          s.id === action.payload.id
+            ? { ...s, name: action.payload.name, description: action.payload.description, instructions: action.payload.instructions }
+            : s
+        ),
+      };
+    case 'SET_SOURCE_WEIGHT':
+      return {
+        ...state,
+        sourceWeights: {
+          ...state.sourceWeights,
+          [action.payload.sourceId]: action.payload.weight,
+        },
       };
     default:
       return state;

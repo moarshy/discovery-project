@@ -7,7 +7,8 @@ export interface Project {
   outputCount: number;
 }
 
-export type IntegrationId = 'jira' | 'confluence' | 'google-drive' | 'slack' | 'local-files';
+export type IntegrationId = 'jira' | 'confluence' | 'google-drive' | 'slack' | 'local-files'
+  | 'intercom' | 'airtable' | 'mixpanel' | 'discord';
 
 export interface Integration {
   id: IntegrationId;
@@ -107,8 +108,32 @@ export interface Report {
 // Processing pipeline
 export type ProcessingStatus = 'idle' | 'extracting' | 'graphing' | 'generating' | 'done';
 
+// Theme
+export type Theme = 'dark' | 'light';
+
 // App state
-export type Screen = 'projects' | 'workspace' | 'integrations';
+// Skills
+export type SkillCategory = 'data-source' | 'extraction' | 'synthesis';
+
+export type SkillId = string;
+
+export interface Skill {
+  id: SkillId;
+  name: string;
+  description: string;
+  instructions: string;
+  category: SkillCategory;
+  enabled: boolean;
+  githubUrl?: string;
+  icon: string;
+  color: string;
+}
+
+export type SourceSkillAssignments = Record<string, SkillId[]>;
+
+export type SourceWeights = Record<string, number>;  // sourceId → weight (0..2, default 1)
+
+export type Screen = 'projects' | 'workspace' | 'integrations' | 'skills';
 export type GraphViewMode = 'table' | 'graph';
 export type AddSourceStep = 'closed' | 'pick-integration' | 'browse-items';
 
@@ -132,6 +157,13 @@ export interface AppState {
   focusNodeId: string | null;
   graphFilters: GraphFilterState;
   processingStatus: ProcessingStatus;
+  theme: Theme;
+  skills: Skill[];
+  sourceSkillAssignments: SourceSkillAssignments;
+  showImportSkillModal: boolean;
+  skillPopoverSourceId: string | null;
+  editingSkillId: SkillId | null;
+  sourceWeights: SourceWeights;
 }
 
 export type AppAction =
@@ -156,4 +188,17 @@ export type AppAction =
   | { type: 'TOGGLE_EDGE_TYPE_FILTER'; payload: EdgeType }
   | { type: 'CLEAR_FOCUS_MODE' }
   | { type: 'START_PROCESSING' }
-  | { type: 'SET_PROCESSING_STATUS'; payload: ProcessingStatus };
+  | { type: 'SET_PROCESSING_STATUS'; payload: ProcessingStatus }
+  | { type: 'TOGGLE_THEME' }
+  | { type: 'NAVIGATE_TO_SKILLS' }
+  | { type: 'TOGGLE_SKILL'; payload: SkillId }
+  | { type: 'IMPORT_SKILL'; payload: { url: string } }
+  | { type: 'OPEN_IMPORT_SKILL_MODAL' }
+  | { type: 'CLOSE_IMPORT_SKILL_MODAL' }
+  | { type: 'OPEN_SKILL_POPOVER'; payload: string }
+  | { type: 'CLOSE_SKILL_POPOVER' }
+  | { type: 'TOGGLE_SOURCE_SKILL'; payload: { sourceId: string; skillId: SkillId } }
+  | { type: 'SELECT_SKILL'; payload: SkillId }
+  | { type: 'DESELECT_SKILL' }
+  | { type: 'UPDATE_SKILL'; payload: { id: SkillId; name: string; description: string; instructions: string } }
+  | { type: 'SET_SOURCE_WEIGHT'; payload: { sourceId: string; weight: number } };

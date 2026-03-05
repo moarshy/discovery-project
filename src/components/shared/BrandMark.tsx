@@ -17,6 +17,10 @@ const brands: Record<IntegrationId, BrandConfig> = {
   'google-drive':{ letter: 'G',  color: '#EA4335', bg: '#EA433515' },
   slack:         { letter: 'S',  color: '#611f69', bg: '#611f6915' },
   'local-files': { letter: '↑',  color: '#8888A0', bg: '#8888A015' },
+  intercom:      { letter: 'I',  color: '#286EFA', bg: '#286EFA15' },
+  airtable:      { letter: 'A',  color: '#18BFFF', bg: '#18BFFF15' },
+  mixpanel:      { letter: 'M',  color: '#7856FF', bg: '#7856FF15' },
+  discord:       { letter: 'D',  color: '#5865F2', bg: '#5865F215' },
 };
 
 type BrandMarkSize = 'sm' | 'md' | 'lg';

@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { Plus, Upload, PanelLeftClose } from 'lucide-react';
 import { useApp } from '../../store';
 import { sourceCategories } from '../../data/sources';
 import { entities } from '../../data/entities';
 import { SourceItem } from './SourceItem';
 import { AddSourceModal } from './AddSourceModal';
+import { SkillPopover } from './SkillPopover';
 
 interface SourcePanelProps {
   hasData: boolean;
@@ -62,23 +64,36 @@ export function SourcePanel({ hasData, onCollapse }: SourcePanelProps) {
                   {category.label}
                 </p>
                 <div className="space-y-1">
-                  {category.sources.map((source) => (
-                    <SourceItem
-                      key={source.id}
-                      source={source}
-                      isSelected={state.selectedSourceId === source.id}
-                      isHighlighted={highlightedSourceIds.has(source.id)}
-                      onClick={() =>
-                        dispatch({
-                          type: 'SELECT_SOURCE',
-                          payload:
-                            state.selectedSourceId === source.id
-                              ? null
-                              : source.id,
-                        })
-                      }
-                    />
-                  ))}
+                  {category.sources.map((source) => {
+                    const isSelected = state.selectedSourceId === source.id;
+                    const showPopover = state.skillPopoverSourceId === source.id;
+
+                    return (
+                      <div key={source.id} className="relative">
+                        <SourceItem
+                          source={source}
+                          isSelected={isSelected}
+                          isHighlighted={highlightedSourceIds.has(source.id)}
+                          onClick={() => {
+                            if (isSelected) {
+                              dispatch({ type: 'SELECT_SOURCE', payload: null });
+                              dispatch({ type: 'CLOSE_SKILL_POPOVER' });
+                            } else {
+                              dispatch({ type: 'SELECT_SOURCE', payload: source.id });
+                              dispatch({ type: 'OPEN_SKILL_POPOVER', payload: source.id });
+                            }
+                          }}
+                          weight={state.sourceWeights[source.id] ?? 1.0}
+                          onWeightChange={(w) =>
+                            dispatch({ type: 'SET_SOURCE_WEIGHT', payload: { sourceId: source.id, weight: w } })
+                          }
+                        />
+                        <AnimatePresence>
+                          {showPopover && <SkillPopover sourceId={source.id} />}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}

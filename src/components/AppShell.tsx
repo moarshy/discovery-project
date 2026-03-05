@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, Puzzle, Settings } from 'lucide-react';
+import { Layers, Puzzle, Zap, Settings, Sun, Moon } from 'lucide-react';
 import { useApp } from '../store';
 import { ProjectsList } from './ProjectsList';
 import { ProjectWorkspace } from './ProjectWorkspace';
 import { IntegrationsPage } from './IntegrationsPage';
+import { SkillsPage } from './SkillsPage';
 import type { Screen } from '../types';
 
 export function AppShell() {
@@ -12,6 +13,7 @@ export function AppShell() {
   function handleNav(screen: Screen) {
     if (screen === 'projects') dispatch({ type: 'NAVIGATE_TO_PROJECTS' });
     else if (screen === 'integrations') dispatch({ type: 'NAVIGATE_TO_INTEGRATIONS' });
+    else if (screen === 'skills') dispatch({ type: 'NAVIGATE_TO_SKILLS' });
   }
 
   return (
@@ -56,7 +58,25 @@ export function AppShell() {
           >
             <Puzzle className="w-5 h-5" />
           </button>
+          <button
+            onClick={() => handleNav('skills')}
+            className={`p-2 rounded-lg transition-colors ${
+              state.screen === 'skills'
+                ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)]'
+                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)]'
+            }`}
+            title="Skills"
+          >
+            <Zap className="w-5 h-5" />
+          </button>
           <div className="flex-1" />
+          <button
+            onClick={() => dispatch({ type: 'TOGGLE_THEME' })}
+            className="p-2 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
+            title={state.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {state.theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
           <button
             className="p-2 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated)] transition-colors"
             title="Settings"
@@ -102,6 +122,18 @@ export function AppShell() {
                 className="h-full"
               >
                 <IntegrationsPage />
+              </motion.div>
+            )}
+            {state.screen === 'skills' && (
+              <motion.div
+                key="skills"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+                className="h-full"
+              >
+                <SkillsPage />
               </motion.div>
             )}
           </AnimatePresence>
